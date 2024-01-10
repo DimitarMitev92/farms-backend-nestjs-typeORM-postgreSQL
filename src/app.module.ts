@@ -7,6 +7,9 @@ import { ConfigModule } from '@nestjs/config';
 //ZOD Schema
 import { envSchema } from './zod/env-schema';
 
+//User
+import { UserModule } from './user/user.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,9 +23,10 @@ import { envSchema } from './zod/env-schema';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [],
+      entities: ['dist/**/*.entity.js'],
       synchronize: true,
     }),
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

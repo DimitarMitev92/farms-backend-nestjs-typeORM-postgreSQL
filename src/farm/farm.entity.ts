@@ -18,7 +18,7 @@ export class Farm {
   name: string;
 
   @Column()
-  @IsNotEmpty({ message: 'Location can be empty' })
+  @IsNotEmpty({ message: 'Location cannot be empty' })
   location: string;
 
   @Column({ name: 'user_id' })

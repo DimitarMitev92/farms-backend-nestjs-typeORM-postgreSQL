@@ -15,7 +15,7 @@ export class Cultivation {
 
   @Column()
   @IsNotEmpty({ message: 'Cultivation name cannot be empty' })
-  crop: string;
+  cultivation: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

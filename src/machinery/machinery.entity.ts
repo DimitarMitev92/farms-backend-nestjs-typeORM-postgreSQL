@@ -8,7 +8,7 @@ import {
   ManyToOne,
   Column,
 } from 'typeorm';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsUUID } from 'class-validator';
 import { Farm } from 'src/farm/farm.entity';
 
 @Entity()
@@ -18,6 +18,7 @@ export class Machinery {
 
   @ManyToOne(() => Farm, (farm) => farm.id)
   @JoinColumn({ name: 'farm_id' })
+  @IsUUID()
   farm: Farm;
 
   @Column()

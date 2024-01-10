@@ -8,7 +8,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsUUID } from 'class-validator';
 import { Crop } from 'src/crop/crop.entity';
 import { Field } from 'src/field/field.entity';
 import { Cultivation } from 'src/cultivation/cultivation.entity';
@@ -20,14 +20,17 @@ export class FieldCultivation {
 
   @ManyToOne(() => Cultivation, (cultivation) => cultivation.id)
   @JoinColumn({ name: 'cultivation_id' })
+  @IsUUID()
   cultivation: Cultivation;
 
   @ManyToOne(() => Field, (field) => field.id)
   @JoinColumn({ name: 'field_id' })
+  @IsUUID()
   field: Field;
 
   @ManyToOne(() => Crop, (crop) => crop.id)
   @JoinColumn({ name: 'crop_id' })
+  @IsUUID()
   crop: Crop;
 
   @Column({ type: 'enum', enum: ['past', 'present'], name: 'past_or_present' })

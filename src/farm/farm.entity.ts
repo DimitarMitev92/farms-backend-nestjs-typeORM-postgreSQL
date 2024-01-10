@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
 } from 'typeorm';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsUUID } from 'class-validator';
 
 @Entity()
 export class Farm {
@@ -20,6 +20,11 @@ export class Farm {
   @Column()
   @IsNotEmpty({ message: 'Location can be empty' })
   location: string;
+
+  @Column({ name: 'user_id' })
+  @IsNotEmpty({ message: 'User id cannot be empty' })
+  @IsUUID()
+  userId: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

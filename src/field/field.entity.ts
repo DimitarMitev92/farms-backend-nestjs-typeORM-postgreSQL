@@ -8,7 +8,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsUUID } from 'class-validator';
 import { Soil } from 'src/soil/soil.entity';
 import { Farm } from 'src/farm/farm.entity';
 
@@ -23,10 +23,12 @@ export class Field {
 
   @ManyToOne(() => Soil, (soil) => soil.id)
   @JoinColumn({ name: 'soil_id' })
+  @IsUUID()
   soil: Soil;
 
   @ManyToOne(() => Farm, (farm) => farm.id)
   @JoinColumn({ name: 'farm_id' })
+  @IsUUID()
   farm: Farm;
 
   @CreateDateColumn({ name: 'created_at' })

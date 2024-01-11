@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cultivation } from './cultivation.entity';
+import { CreateCultivationDto } from './dto/create-cultivation.dto';
 
 @Injectable()
 export class CultivationService {
@@ -18,14 +19,23 @@ export class CultivationService {
     return this.cultivationRepository.findOne({ where: { id } });
   }
 
-  async create(cultivation: Cultivation): Promise<Cultivation> {
-    const newCultivation = this.cultivationRepository.create(cultivation);
-    return await this.cultivationRepository.save(newCultivation);
+  async create(
+    createCultivationDto: CreateCultivationDto,
+  ): Promise<Cultivation> {
+    const cultivation = new Cultivation();
+    cultivation.cultivation = createCultivationDto.cultivation;
+    return await this.cultivationRepository.save(cultivation);
   }
 
-  async update(id: string, cultivation: Cultivation): Promise<Cultivation> {
-    await this.cultivationRepository.update(id, cultivation);
-    return await this.cultivationRepository.findOne({ where: { id } });
+  async update(
+    id: string,
+    updateCultivationDto: CreateCultivationDto,
+  ): Promise<Cultivation> {
+    const cultivation = await this.cultivationRepository.findOne({
+      where: { id },
+    });
+    cultivation.cultivation = updateCultivationDto.cultivation;
+    return await this.cultivationRepository.save(cultivation);
   }
 
   async remove(id: string): Promise<void> {

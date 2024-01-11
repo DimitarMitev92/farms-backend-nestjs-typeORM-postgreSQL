@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Crop } from './crop.entity';
+import { CreateCropDto } from './dto/create-crop.dto';
 
 @Injectable()
 export class CropService {
@@ -18,14 +19,16 @@ export class CropService {
     return this.cropRepository.findOne({ where: { id } });
   }
 
-  async create(crop: Crop): Promise<Crop> {
-    const newCrop = this.cropRepository.create(crop);
-    return await this.cropRepository.save(newCrop);
+  async create(createCropDto: CreateCropDto): Promise<Crop> {
+    const crop = new Crop();
+    crop.crop = createCropDto.crop;
+    return await this.cropRepository.save(crop);
   }
 
-  async update(id: string, crop: Crop): Promise<Crop> {
-    await this.cropRepository.update(id, crop);
-    return await this.cropRepository.findOne({ where: { id } });
+  async update(id: string, updateCropDto: CreateCropDto): Promise<Crop> {
+    const crop = await this.cropRepository.findOne({ where: { id } });
+    crop.crop = updateCropDto.crop;
+    return await this.cropRepository.save(crop);
   }
 
   async remove(id: string): Promise<void> {

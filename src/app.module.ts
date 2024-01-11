@@ -17,6 +17,7 @@ import { FarmModule } from './farm/farm.module';
 import { MachineryModule } from './machinery/machinery.module';
 import { FieldModule } from './field/field.module';
 import { CultivationModule } from './cultivation/cultivation.module';
+import { GrowingPeriodModule } from './growing-period/growing-period.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { CultivationModule } from './cultivation/cultivation.module';
     MachineryModule,
     FieldModule,
     CultivationModule,
+    GrowingPeriodModule,
   ],
   controllers: [AppController],
   providers: [AppService],

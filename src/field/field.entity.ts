@@ -11,7 +11,6 @@ import {
 import { IsNotEmpty, IsUUID } from 'class-validator';
 import { Soil } from 'src/soil/soil.entity';
 import { Farm } from 'src/farm/farm.entity';
-import { Crop } from 'src/crop/crop.entity';
 
 @Entity()
 export class Field {
@@ -22,24 +21,19 @@ export class Field {
   @IsNotEmpty({ message: 'Name cannot be empty' })
   name: string;
 
-  @Column({ name: 'boundaries' })
+  @Column({ type: 'polygon' })
   @IsNotEmpty({ message: 'Boundaries cannot be empty' })
   boundaries: string;
 
   @ManyToOne(() => Soil, (soil) => soil.id)
   @JoinColumn({ name: 'soil_id' })
   @IsUUID()
-  soil: Soil;
+  soilId: string;
 
   @ManyToOne(() => Farm, (farm) => farm.id)
   @JoinColumn({ name: 'farm_id' })
   @IsUUID()
-  farm: Farm;
-
-  @ManyToOne(() => Crop, (crop) => crop.id)
-  @JoinColumn({ name: 'crop_id' })
-  @IsUUID()
-  crop: Crop;
+  farmId: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { MachineryService } from './machinery.service';
 import { Machinery } from './machinery.entity';
+import { CreateMachineryDto } from './dto/create-machinery.dto';
 
 @Controller('machinery')
 export class MachineryController {
@@ -25,16 +26,16 @@ export class MachineryController {
   }
 
   @Post()
-  create(@Body() machinery: Machinery): Promise<Machinery> {
-    return this.machineryService.create(machinery);
+  create(@Body() createMachineryDto: CreateMachineryDto): Promise<Machinery> {
+    return this.machineryService.create(createMachineryDto);
   }
 
   @Put(':id')
   update(
     @Param('id') id: string,
-    @Body() machinery: Machinery,
+    @Body() createMachineryDto: CreateMachineryDto,
   ): Promise<Machinery> {
-    return this.machineryService.update(id, machinery);
+    return this.machineryService.update(id, createMachineryDto);
   }
 
   @Delete(':id')

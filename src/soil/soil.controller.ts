@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { SoilService } from './soil.service';
 import { Soil } from './soil.entity';
+import { CreateSoilDto } from './dto/create-soul.dto';
 
 @Controller('soil')
 export class SoilController {
@@ -25,13 +26,16 @@ export class SoilController {
   }
 
   @Post()
-  create(@Body() soil: Soil): Promise<Soil> {
-    return this.soilService.create(soil);
+  create(@Body() createSoilDto: CreateSoilDto): Promise<Soil> {
+    return this.soilService.create(createSoilDto);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() soil: Soil): Promise<Soil> {
-    return this.soilService.update(id, soil);
+  update(
+    @Param('id') id: string,
+    @Body() updateSoilDto: CreateSoilDto,
+  ): Promise<Soil> {
+    return this.soilService.update(id, updateSoilDto);
   }
 
   @Delete(':id')

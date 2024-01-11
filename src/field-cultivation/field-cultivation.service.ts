@@ -7,31 +7,31 @@ import { FieldCultivation } from './field-cultivation.entity';
 export class FieldCultivationService {
   constructor(
     @InjectRepository(FieldCultivation)
-    private readonly fieldCultivationRepository: Repository<FieldCultivation>,
+    private readonly cultivationRepository: Repository<FieldCultivation>,
   ) {}
 
   findAll(): Promise<FieldCultivation[]> {
-    return this.fieldCultivationRepository.find();
+    return this.cultivationRepository.find();
   }
 
   findOne(id: string): Promise<FieldCultivation> {
-    return this.fieldCultivationRepository.findOne({ where: { id } });
+    return this.cultivationRepository.findOne({ where: { id } });
   }
 
   async create(cultivation: FieldCultivation): Promise<FieldCultivation> {
-    const newCultivation = this.fieldCultivationRepository.create(cultivation);
-    return await this.fieldCultivationRepository.save(newCultivation);
+    const newCultivation = this.cultivationRepository.create(cultivation);
+    return await this.cultivationRepository.save(newCultivation);
   }
 
   async update(
     id: string,
     cultivation: FieldCultivation,
   ): Promise<FieldCultivation> {
-    await this.fieldCultivationRepository.update(id, cultivation);
-    return await this.fieldCultivationRepository.findOne({ where: { id } });
+    await this.cultivationRepository.update(id, cultivation);
+    return await this.cultivationRepository.findOne({ where: { id } });
   }
 
   async remove(id: string): Promise<void> {
-    await this.fieldCultivationRepository.update(id, { deletedAt: new Date() });
+    await this.cultivationRepository.delete(id);
   }
 }

@@ -30,7 +30,6 @@ export class FarmController {
     const farm: Farm = {
       name: createFarmDto.name,
       location: createFarmDto.location,
-      userId: createFarmDto.userId,
       id: undefined,
       createdAt: undefined,
       updatedAt: undefined,

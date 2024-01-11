@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Machinery } from './machinery.entity';
+import { CreateMachineryDto } from './dto/create-machinery.dto';
 
 @Injectable()
 export class MachineryService {
@@ -18,13 +19,16 @@ export class MachineryService {
     return this.machineryRepository.findOne({ where: { id } });
   }
 
-  async create(farm: Machinery): Promise<Machinery> {
-    const newMachinery = this.machineryRepository.create(farm);
+  async create(createMachineryDto: CreateMachineryDto): Promise<Machinery> {
+    const newMachinery = this.machineryRepository.create(createMachineryDto);
     return await this.machineryRepository.save(newMachinery);
   }
 
-  async update(id: string, machinery: Machinery): Promise<Machinery> {
-    await this.machineryRepository.update(id, machinery);
+  async update(
+    id: string,
+    createMachineryDto: CreateMachineryDto,
+  ): Promise<Machinery> {
+    await this.machineryRepository.update(id, createMachineryDto);
     return await this.machineryRepository.findOne({ where: { id } });
   }
 

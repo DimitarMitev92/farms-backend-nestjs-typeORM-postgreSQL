@@ -11,11 +11,11 @@ export class CultivationService {
     private readonly cultivationRepository: Repository<Cultivation>,
   ) {}
 
-  findAll(): Promise<Cultivation[]> {
+  async findAll(): Promise<Cultivation[]> {
     return this.cultivationRepository.find();
   }
 
-  findOne(id: string): Promise<Cultivation> {
+  async findOne(id: string): Promise<Cultivation> {
     return this.cultivationRepository.findOne({ where: { id } });
   }
 

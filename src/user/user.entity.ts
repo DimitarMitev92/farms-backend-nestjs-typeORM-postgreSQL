@@ -6,37 +6,40 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
 } from 'typeorm';
-import { IsEmail, IsNotEmpty, IsUUID } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty } from 'class-validator';
+
+export enum UserRights {
+  OWNER = 'OWNER',
+  OPERATOR = 'OPERATOR',
+  VIEWER = 'VIEWER',
+}
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  @IsUUID('4', { message: 'Invalid UUID format' })
   id: string;
 
-  @Column({ name: 'first_name' })
-  @IsNotEmpty({ message: 'First name cannot be empty' })
+  @Column()
+  @IsNotEmpty()
   firstName: string;
 
-  @Column({ name: 'last_name' })
-  @IsNotEmpty({ message: 'Last name cannot be empty' })
+  @Column()
+  @IsNotEmpty()
   lastName: string;
 
-  @Column()
-  @IsEmail({}, { message: 'Invalid email format' })
+  @Column({ unique: true })
+  @IsNotEmpty()
+  @IsEmail()
   email: string;
 
-  @Column({ name: 'password_hash' })
-  @IsNotEmpty({ message: 'Password cannot be empty' })
+  @Column()
+  @IsNotEmpty()
   passwordHash: string;
 
-  @Column({
-    type: 'enum',
-    enum: ['OWNER', 'OPERATOR', 'VIEWER'],
-    default: 'VIEWER',
-  })
-  @IsNotEmpty({ message: 'Rights must be OWNER, OPERATOR or VIEWER' })
-  rights: string;
+  @Column({ type: 'enum', enum: UserRights })
+  @IsNotEmpty()
+  @IsEnum(UserRights)
+  rights: UserRights;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

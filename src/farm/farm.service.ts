@@ -11,22 +11,22 @@ export class FarmService {
     private readonly farmRepository: Repository<Farm>,
   ) {}
 
-  findAll(): Promise<Farm[]> {
+  async findAll(): Promise<Farm[]> {
     return this.farmRepository.find();
   }
 
-  findOne(id: string): Promise<Farm> {
+  async findOne(id: string): Promise<Farm> {
     return this.farmRepository.findOne({ where: { id } });
   }
 
-  async create(farm: Farm): Promise<Farm> {
-    const newFarm = this.farmRepository.create(farm);
+  async create(createFarmDto: CreateFarmDto): Promise<Farm> {
+    const newFarm = this.farmRepository.create(createFarmDto);
     return await this.farmRepository.save(newFarm);
   }
 
   async update(
     id: string,
-    updatedFarmDto: Partial<CreateFarmDto>,
+    updateFarmDto: Partial<CreateFarmDto>,
   ): Promise<Farm> {
     const farm = await this.farmRepository.findOne({ where: { id } });
 
@@ -34,7 +34,7 @@ export class FarmService {
       throw new Error(`Farm with id ${id} not found`);
     }
 
-    Object.assign(farm, updatedFarmDto);
+    Object.assign(farm, updateFarmDto);
 
     return await this.farmRepository.save(farm);
   }

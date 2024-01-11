@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { FieldService } from './field.service';
 import { Field } from './field.entity';
+import { CreateFieldDto } from './dto/create-field.dto';
 
 @Controller('field')
 export class FieldController {
@@ -25,13 +26,31 @@ export class FieldController {
   }
 
   @Post()
-  create(@Body() field: Field): Promise<Field> {
+  create(@Body() createFieldDto: Partial<CreateFieldDto>): Promise<Field> {
+    ///////////////////////////////////////////
+    //ADD VALIDATION FOR farmId, cropId, soilId
+    ///////////////////////////////////////////
+
+    const field: Field = {
+      name: createFieldDto.name,
+      boundaries: createFieldDto.boundaries,
+      soilId: createFieldDto.soilId,
+      farmId: createFieldDto.farmId,
+      id: undefined,
+      createdAt: undefined,
+      updatedAt: undefined,
+      deletedAt: undefined,
+    };
+
     return this.fieldService.create(field);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() field: Field): Promise<Field> {
-    return this.fieldService.update(id, field);
+  update(
+    @Param('id') id: string,
+    @Body() updateFieldDto: Partial<CreateFieldDto>,
+  ): Promise<Partial<Field>> {
+    return this.fieldService.update(id, updateFieldDto);
   }
 
   @Delete(':id')

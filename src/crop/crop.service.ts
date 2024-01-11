@@ -11,11 +11,11 @@ export class CropService {
     private readonly cropRepository: Repository<Crop>,
   ) {}
 
-  findAll(): Promise<Crop[]> {
+  async findAll(): Promise<Crop[]> {
     return this.cropRepository.find();
   }
 
-  findOne(id: string): Promise<Crop> {
+  async findOne(id: string): Promise<Crop> {
     return this.cropRepository.findOne({ where: { id } });
   }
 

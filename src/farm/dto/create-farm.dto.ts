@@ -6,7 +6,4 @@ export class CreateFarmDto {
 
   @IsNotEmpty()
   readonly location: string;
-
-  @IsNotEmpty()
-  readonly userId: string;
 }

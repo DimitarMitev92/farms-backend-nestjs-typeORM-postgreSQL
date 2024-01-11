@@ -39,6 +39,6 @@ export class CultivationService {
   }
 
   async remove(id: string): Promise<void> {
-    await this.cultivationRepository.delete(id);
+    await this.cultivationRepository.update(id, { deletedAt: new Date() });
   }
 }

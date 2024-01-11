@@ -29,6 +29,6 @@ export class SoilService {
   }
 
   async remove(id: string): Promise<void> {
-    await this.soilRepository.delete(id);
+    await this.soilRepository.update(id, { deletedAt: new Date() });
   }
 }

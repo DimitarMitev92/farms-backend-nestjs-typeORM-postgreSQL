@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { CultivationService } from './cultivation.service';
 import { Cultivation } from './cultivation.entity';
+import { CreateCultivationDto } from './dto/create-cultivation.dto';
 
 @Controller('cultivation')
 export class CultivationController {
@@ -25,16 +26,18 @@ export class CultivationController {
   }
 
   @Post()
-  create(@Body() cultivation: Cultivation): Promise<Cultivation> {
-    return this.cultivationService.create(cultivation);
+  create(
+    @Body() createCultivationDto: CreateCultivationDto,
+  ): Promise<Cultivation> {
+    return this.cultivationService.create(createCultivationDto);
   }
 
   @Put(':id')
   update(
     @Param('id') id: string,
-    @Body() cultivation: Cultivation,
+    @Body() updateCultivationDto: CreateCultivationDto,
   ): Promise<Cultivation> {
-    return this.cultivationService.update(id, cultivation);
+    return this.cultivationService.update(id, updateCultivationDto);
   }
 
   @Delete(':id')

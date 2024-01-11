@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { CropService } from './crop.service';
 import { Crop } from './crop.entity';
+import { CreateCropDto } from './dto/create-crop.dto';
 
 @Controller('crop')
 export class CropController {
@@ -25,13 +26,16 @@ export class CropController {
   }
 
   @Post()
-  create(@Body() crop: Crop): Promise<Crop> {
-    return this.cropService.create(crop);
+  create(@Body() createCropDto: CreateCropDto): Promise<Crop> {
+    return this.cropService.create(createCropDto);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() crop: Crop): Promise<Crop> {
-    return this.cropService.update(id, crop);
+  update(
+    @Param('id') id: string,
+    @Body() updatedCropDto: CreateCropDto,
+  ): Promise<Crop> {
+    return this.cropService.update(id, updatedCropDto);
   }
 
   @Delete(':id')

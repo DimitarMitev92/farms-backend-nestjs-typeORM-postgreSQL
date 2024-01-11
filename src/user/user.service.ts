@@ -35,6 +35,6 @@ export class UserService {
   }
 
   async deleteUser(id: string): Promise<void> {
-    await this.userRepository.softDelete(id);
+    await this.userRepository.update(id, { deletedAt: new Date() });
   }
 }

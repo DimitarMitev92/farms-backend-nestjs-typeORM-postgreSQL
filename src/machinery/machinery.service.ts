@@ -29,6 +29,6 @@ export class MachineryService {
   }
 
   async remove(id: string): Promise<void> {
-    await this.machineryRepository.delete(id);
+    await this.machineryRepository.update(id, { deletedAt: new Date() });
   }
 }

@@ -32,6 +32,6 @@ export class CropService {
   }
 
   async remove(id: string): Promise<void> {
-    await this.cropRepository.delete(id);
+    await this.cropRepository.update(id, { deletedAt: new Date() });
   }
 }

@@ -29,6 +29,6 @@ export class FieldService {
   }
 
   async remove(id: string): Promise<void> {
-    await this.fieldRepository.delete(id);
+    await this.fieldRepository.update(id, { deletedAt: new Date() });
   }
 }

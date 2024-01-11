@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { FarmService } from './farm.service';
 import { Farm } from './farm.entity';
+import { CreateFarmDto } from './dto/create-farm.dto';
 
 @Controller('farm')
 export class FarmController {
@@ -25,13 +26,26 @@ export class FarmController {
   }
 
   @Post()
-  create(@Body() farm: Farm): Promise<Farm> {
+  create(@Body() createFarmDto: CreateFarmDto): Promise<Farm> {
+    const farm: Farm = {
+      name: createFarmDto.name,
+      location: createFarmDto.location,
+      userId: createFarmDto.userId,
+      id: undefined,
+      createdAt: undefined,
+      updatedAt: undefined,
+      deletedAt: undefined,
+    };
+
     return this.farmService.create(farm);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() farm: Farm): Promise<Farm> {
-    return this.farmService.update(id, farm);
+  update(
+    @Param('id') id: string,
+    @Body() updatedFarmDto: Partial<CreateFarmDto>,
+  ): Promise<Partial<Farm>> {
+    return this.farmService.update(id, updatedFarmDto);
   }
 
   @Delete(':id')

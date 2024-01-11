@@ -11,11 +11,16 @@ import {
 import { IsNotEmpty, IsUUID } from 'class-validator';
 import { Soil } from 'src/soil/soil.entity';
 import { Farm } from 'src/farm/farm.entity';
+import { Crop } from 'src/crop/crop.entity';
 
 @Entity()
 export class Field {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column()
+  @IsNotEmpty({ message: 'Name cannot be empty' })
+  name: string;
 
   @Column({ name: 'boundaries' })
   @IsNotEmpty({ message: 'Boundaries cannot be empty' })
@@ -30,6 +35,11 @@ export class Field {
   @JoinColumn({ name: 'farm_id' })
   @IsUUID()
   farm: Farm;
+
+  @ManyToOne(() => Crop, (crop) => crop.id)
+  @JoinColumn({ name: 'crop_id' })
+  @IsUUID()
+  crop: Crop;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

@@ -37,6 +37,10 @@ export class FieldCultivation {
   @IsNotEmpty({ message: 'Past or present cannot be empty' })
   pastOrPresent: string;
 
+  @Column({ name: 'starting_date' })
+  @IsNotEmpty({ message: 'Date cannot be empty' })
+  startingDate: Date;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

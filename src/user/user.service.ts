@@ -1,16 +1,17 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, QueryFailedError, Repository } from 'typeorm';
 import { User, UserRights } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcryptjs';
-import * as jwt from 'jsonwebtoken';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly jwtService: JwtService,
   ) {}
 
   async findAll(): Promise<User[]> {
@@ -21,9 +22,17 @@ export class UserService {
     return this.userRepository.findOne({ where: { id, deletedAt: null } });
   }
 
+  async findOneByEmail(email: string): Promise<User> {
+    return this.userRepository.findOne({
+      where: { email: email, deletedAt: null },
+    });
+  }
+
   async register(
     createUserDto: CreateUserDto,
-  ): Promise<string | { statusCode: number; message: string }> {
+  ): Promise<
+    string | { statusCode: number; message: string } | { access_token: string }
+  > {
     try {
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(
@@ -31,26 +40,22 @@ export class UserService {
         saltRounds,
       );
 
-      const user = this.userRepository.create(
-        Object.assign({}, createUserDto, {
-          rights: UserRights.VIEWER,
-          password: hashedPassword,
-        }) as DeepPartial<User>,
-      );
+      const data = Object.assign({}, createUserDto, {
+        rights: UserRights.VIEWER,
+        password: hashedPassword,
+      }) as DeepPartial<User>;
+
+      const user = this.userRepository.create(data);
 
       const returnedUserFromBase = await this.userRepository.save(user);
 
-      const token = jwt.sign(
-        {
-          id: returnedUserFromBase.id,
-          email: returnedUserFromBase.email,
-          rights: returnedUserFromBase.rights,
-        },
-        process.env.JWT_SECRET,
-        { expiresIn: '24h' },
-      );
+      const payload = {
+        id: returnedUserFromBase.id,
+        email: returnedUserFromBase.email,
+        rights: returnedUserFromBase.rights,
+      };
 
-      return token;
+      return { access_token: await this.jwtService.signAsync(payload) };
     } catch (error) {
       if (
         error instanceof QueryFailedError &&
@@ -60,21 +65,5 @@ export class UserService {
       }
       return { statusCode: 500, message: 'Internal Server Error' };
     }
-  }
-
-  async login(email: string, password: string): Promise<string> {
-    const user = await this.userRepository.findOne({
-      where: { email, deletedAt: null },
-    });
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    const token = jwt.sign(
-      { id: user.id, email: user.email, rights: user.rights },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' },
-    );
-    return token;
   }
 }

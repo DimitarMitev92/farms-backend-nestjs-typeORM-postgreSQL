@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cultivation } from './cultivation.entity';
@@ -34,11 +34,6 @@ export class CultivationService {
     const cultivation = await this.cultivationRepository.findOne({
       where: { id },
     });
-
-    if (!cultivation) {
-      throw new NotFoundException(`Cultivation with id ${id} not found`);
-    }
-
     cultivation.cultivation = updateCultivationDto.cultivation;
     return await this.cultivationRepository.save(cultivation);
   }

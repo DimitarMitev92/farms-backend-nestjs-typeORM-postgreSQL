@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Farm } from './farm.entity';
@@ -24,16 +20,8 @@ export class FarmService {
   }
 
   async create(createFarmDto: CreateFarmDto): Promise<Farm> {
-    try {
-      const newFarm = this.farmRepository.create(createFarmDto);
-      return await this.farmRepository.save(newFarm);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      } else {
-        throw new BadRequestException('An unknown error occurred');
-      }
-    }
+    const newFarm = this.farmRepository.create(createFarmDto);
+    return await this.farmRepository.save(newFarm);
   }
 
   async update(
@@ -43,20 +31,12 @@ export class FarmService {
     const farm = await this.farmRepository.findOne({ where: { id } });
 
     if (!farm) {
-      throw new NotFoundException(`Farm with id ${id} not found`);
+      throw new Error(`Farm with id ${id} not found`);
     }
 
     Object.assign(farm, updateFarmDto);
 
-    try {
-      return await this.farmRepository.save(farm);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      } else {
-        throw new BadRequestException('An unknown error occurred');
-      }
-    }
+    return await this.farmRepository.save(farm);
   }
 
   async remove(id: string): Promise<void> {

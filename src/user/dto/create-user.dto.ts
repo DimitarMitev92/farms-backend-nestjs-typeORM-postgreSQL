@@ -13,7 +13,7 @@ export class CreateUserDto {
   readonly email: string;
 
   @IsNotEmpty()
-  readonly passwordHash: string;
+  readonly password: string;
 
   @IsEnum(UserRights, { message: 'Invalid user rights' })
   readonly rights: string;

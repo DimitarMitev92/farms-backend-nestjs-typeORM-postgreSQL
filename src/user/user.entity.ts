@@ -34,7 +34,7 @@ export class User {
 
   @Column()
   @IsNotEmpty()
-  passwordHash: string;
+  password: string;
 
   @Column({ type: 'enum', enum: UserRights })
   @IsNotEmpty()

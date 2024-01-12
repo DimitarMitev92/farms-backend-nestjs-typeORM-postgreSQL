@@ -1,9 +1,6 @@
-import { IsNotEmpty, MinLength } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 
 export class CreateCultivationDto {
-  @IsNotEmpty({ message: 'Cultivation name cannot be empty' })
-  @MinLength(3, {
-    message: 'Cultivation name must be at least 3 characters long',
-  })
+  @IsNotEmpty()
   readonly cultivation: string;
 }

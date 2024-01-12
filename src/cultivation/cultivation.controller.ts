@@ -6,8 +6,6 @@ import {
   Delete,
   Body,
   Param,
-  BadRequestException,
-  ParseUUIDPipe,
 } from '@nestjs/common';
 import { CultivationService } from './cultivation.service';
 import { Cultivation } from './cultivation.entity';
@@ -28,34 +26,18 @@ export class CultivationController {
   }
 
   @Post()
-  async create(
+  create(
     @Body() createCultivationDto: CreateCultivationDto,
   ): Promise<Cultivation> {
-    try {
-      return await this.cultivationService.create(createCultivationDto);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      } else {
-        throw new BadRequestException('An unknown error occurred');
-      }
-    }
+    return this.cultivationService.create(createCultivationDto);
   }
 
   @Put(':id')
-  async update(
-    @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
+  update(
+    @Param('id') id: string,
     @Body() updateCultivationDto: CreateCultivationDto,
   ): Promise<Cultivation> {
-    try {
-      return await this.cultivationService.update(id, updateCultivationDto);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      } else {
-        throw new BadRequestException('An unknown error occurred');
-      }
-    }
+    return this.cultivationService.update(id, updateCultivationDto);
   }
 
   @Delete(':id')

@@ -6,9 +6,6 @@ import {
   Delete,
   Body,
   Param,
-  ParseUUIDPipe,
-  BadRequestException,
-  NotFoundException,
 } from '@nestjs/common';
 import { FarmService } from './farm.service';
 import { Farm } from './farm.entity';
@@ -29,34 +26,25 @@ export class FarmController {
   }
 
   @Post()
-  async create(@Body() createFarmDto: CreateFarmDto): Promise<Farm> {
-    try {
-      return await this.farmService.create(createFarmDto);
-    } catch (error: any) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      } else {
-        throw new BadRequestException('An unknown error occurred');
-      }
-    }
+  create(@Body() createFarmDto: CreateFarmDto): Promise<Farm> {
+    const farm: Farm = {
+      name: createFarmDto.name,
+      location: createFarmDto.location,
+      id: undefined,
+      createdAt: undefined,
+      updatedAt: undefined,
+      deletedAt: undefined,
+    };
+
+    return this.farmService.create(farm);
   }
 
   @Put(':id')
-  async update(
-    @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
-    @Body() updateFarmDto: Partial<CreateFarmDto>,
-  ): Promise<Farm> {
-    try {
-      return await this.farmService.update(id, updateFarmDto);
-    } catch (error: any) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      } else if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message);
-      } else {
-        throw new BadRequestException('An unknown error occurred');
-      }
-    }
+  update(
+    @Param('id') id: string,
+    @Body() updatedFarmDto: Partial<CreateFarmDto>,
+  ): Promise<Partial<Farm>> {
+    return this.farmService.update(id, updatedFarmDto);
   }
 
   @Delete(':id')

@@ -3,6 +3,8 @@ import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { User, UserRights } from 'src/user/user.entity';
+import { DeepPartial, QueryFailedError } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -28,6 +30,35 @@ export class AuthService {
   ): Promise<
     string | { statusCode: number; message: string } | { access_token: string }
   > {
-    return await this.userService.register(createUserDto);
+    try {
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(
+        createUserDto.password,
+        saltRounds,
+      );
+
+      const data = Object.assign({}, createUserDto, {
+        rights: UserRights.VIEWER,
+        password: hashedPassword,
+      }) as DeepPartial<User>;
+      console.log(data);
+      const returnedUserFromBase = await this.userService.create(data);
+      console.log(returnedUserFromBase);
+      const payload = {
+        id: returnedUserFromBase.id,
+        email: returnedUserFromBase.email,
+        rights: returnedUserFromBase.rights,
+      };
+
+      return { access_token: await this.jwtService.signAsync(payload) };
+    } catch (error) {
+      if (
+        error instanceof QueryFailedError &&
+        error.message.includes('duplicate key')
+      ) {
+        return { statusCode: 400, message: 'Email already exists' };
+      }
+      return { statusCode: 500, message: 'Internal Server Error' };
+    }
   }
 }

@@ -6,6 +6,8 @@ import {
   Delete,
   Body,
   Param,
+  ParseUUIDPipe,
+  BadRequestException,
 } from '@nestjs/common';
 import { CropService } from './crop.service';
 import { Crop } from './crop.entity';
@@ -26,16 +28,32 @@ export class CropController {
   }
 
   @Post()
-  create(@Body() createCropDto: CreateCropDto): Promise<Crop> {
-    return this.cropService.create(createCropDto);
+  async create(@Body() createCropDto: CreateCropDto): Promise<Crop> {
+    try {
+      return await this.cropService.create(createCropDto);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      } else {
+        throw new BadRequestException('An unknown error occurred');
+      }
+    }
   }
 
   @Put(':id')
-  update(
-    @Param('id') id: string,
+  async update(
+    @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
     @Body() updatedCropDto: CreateCropDto,
   ): Promise<Crop> {
-    return this.cropService.update(id, updatedCropDto);
+    try {
+      return await this.cropService.update(id, updatedCropDto);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      } else {
+        throw new BadRequestException('An unknown error occurred');
+      }
+    }
   }
 
   @Delete(':id')

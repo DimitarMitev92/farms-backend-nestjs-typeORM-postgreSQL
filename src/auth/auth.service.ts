@@ -41,9 +41,7 @@ export class AuthService {
         rights: UserRights.VIEWER,
         password: hashedPassword,
       }) as DeepPartial<User>;
-      console.log(data);
       const returnedUserFromBase = await this.userService.create(data);
-      console.log(returnedUserFromBase);
       const payload = {
         id: returnedUserFromBase.id,
         email: returnedUserFromBase.email,

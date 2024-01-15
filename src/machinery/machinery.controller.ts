@@ -37,7 +37,18 @@ export class MachineryController {
   @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR)
   @Post()
   create(@Body() createMachineryDto: CreateMachineryDto): Promise<Machinery> {
-    return this.machineryService.create(createMachineryDto);
+    const machinery: Machinery = {
+      brand: createMachineryDto.brand,
+      model: createMachineryDto.model,
+      identificationNumber: createMachineryDto.identificationNumber,
+      farmId: createMachineryDto.farmId,
+      id: undefined,
+      createdAt: undefined,
+      updatedAt: undefined,
+      deletedAt: undefined,
+    };
+
+    return this.machineryService.create(machinery);
   }
 
   @UseGuards(AuthGuard)
@@ -45,9 +56,9 @@ export class MachineryController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() createMachineryDto: CreateMachineryDto,
-  ): Promise<Machinery> {
-    return this.machineryService.update(id, createMachineryDto);
+    @Body() updateMachineryDto: Partial<CreateMachineryDto>,
+  ): Promise<Partial<Machinery>> {
+    return this.machineryService.update(id, updateMachineryDto);
   }
 
   @UseGuards(AuthGuard)

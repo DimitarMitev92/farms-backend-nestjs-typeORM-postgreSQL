@@ -18,8 +18,9 @@ export class Machinery {
 
   @ManyToOne(() => Farm, (farm) => farm.id)
   @JoinColumn({ name: 'farm_id' })
+  @IsNotEmpty({ message: 'Farm id cannot be empty' })
   @IsUUID()
-  farm: Farm;
+  farmId: string;
 
   @Column()
   @IsNotEmpty({ message: 'Brand cannot be empty' })

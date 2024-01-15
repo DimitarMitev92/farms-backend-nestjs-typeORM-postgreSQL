@@ -1,35 +1,95 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Machinery } from './machinery.entity';
 import { CreateMachineryDto } from './dto/create-machinery.dto';
+import { Farm } from 'src/farm/farm.entity';
 
 @Injectable()
 export class MachineryService {
   constructor(
     @InjectRepository(Machinery)
     private readonly machineryRepository: Repository<Machinery>,
+    @InjectRepository(Farm)
+    private readonly farmRepository: Repository<Farm>,
   ) {}
+
+  private async checkMachineryExists(id: string): Promise<Machinery> {
+    const machinery = await this.machineryRepository.findOne({
+      where: { id },
+    });
+    if (!machinery) {
+      throw new NotFoundException("Machinery with this id doesn't exist");
+    }
+    return machinery;
+  }
 
   findAll(): Promise<Machinery[]> {
     return this.machineryRepository.find();
   }
 
   findOne(id: string): Promise<Machinery> {
-    return this.machineryRepository.findOne({ where: { id } });
+    return this.checkMachineryExists(id);
   }
 
   async create(createMachineryDto: CreateMachineryDto): Promise<Machinery> {
-    const newMachinery = this.machineryRepository.create(createMachineryDto);
-    return await this.machineryRepository.save(newMachinery);
+    const machinery = new Machinery();
+    const identificationNumberExist = await this.machineryRepository.findOne({
+      where: {
+        identificationNumber: createMachineryDto.identificationNumber,
+      },
+    });
+    if (identificationNumberExist) {
+      throw new BadRequestException(
+        'Machinery with this identification number is already in the database.',
+      );
+    }
+    const farmIdExist = await this.farmRepository.findOne({
+      where: { id: createMachineryDto.farmId },
+    });
+    if (!farmIdExist) {
+      throw new BadRequestException('Invalid farm id.');
+    }
+    machinery.brand = createMachineryDto.brand;
+    machinery.model = createMachineryDto.model;
+    machinery.identificationNumber = createMachineryDto.identificationNumber;
+    machinery.farmId = createMachineryDto.farmId;
+    return await this.machineryRepository.save(machinery);
   }
 
   async update(
     id: string,
-    createMachineryDto: CreateMachineryDto,
+    updateMachineryDto: Partial<CreateMachineryDto>,
   ): Promise<Machinery> {
-    await this.machineryRepository.update(id, createMachineryDto);
-    return await this.machineryRepository.findOne({ where: { id } });
+    const machinery = await this.machineryRepository.findOne({ where: { id } });
+    if (!machinery) {
+      throw new Error(`Machinery with id ${id} not found`);
+    }
+
+    const identificationNumberExist = await this.machineryRepository.findOne({
+      where: {
+        identificationNumber: updateMachineryDto.identificationNumber,
+      },
+    });
+    if (identificationNumberExist) {
+      throw new BadRequestException(
+        'Machinery with this identification number is already in the database.',
+      );
+    }
+
+    const farmIdExist = await this.machineryRepository.findOne({
+      where: { farmId: updateMachineryDto.farmId },
+    });
+    if (!farmIdExist) {
+      throw new BadRequestException('Invalid farm id.');
+    }
+
+    Object.assign(machinery, updateMachineryDto);
+    return await this.machineryRepository.save(machinery);
   }
 
   async remove(id: string): Promise<void> {

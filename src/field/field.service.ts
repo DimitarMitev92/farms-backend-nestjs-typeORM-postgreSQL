@@ -61,7 +61,7 @@ export class FieldService {
       where: { id: createFieldDto.soilId },
     });
     if (!soilIdExist) {
-      throw new BadRequestException('Invalid soil uuid.!');
+      throw new BadRequestException('Invalid soil id.');
     }
     const farmIdExist = await this.farmRepository.findOne({
       where: { id: createFieldDto.farmId },
@@ -90,7 +90,7 @@ export class FieldService {
       where: { id: updateFieldDto.soilId },
     });
     if (!soilIdExist) {
-      throw new BadRequestException('Invalid soil uuid.!');
+      throw new BadRequestException('Invalid soil id.');
     }
     const farmIdExist = await this.farmRepository.findOne({
       where: { id: updateFieldDto.farmId },

@@ -15,7 +15,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { UserRightsDec } from 'src/auth/user-rights.decorator';
 import { UserRights } from 'src/user/user.entity';
 
-@Controller('field')
+@Controller('growing-period')
 export class GrowingPeriodController {
   constructor(private readonly growingPeriodService: GrowingPeriodService) {}
 
@@ -47,7 +47,7 @@ export class GrowingPeriodController {
       updatedAt: undefined,
       deletedAt: undefined,
     };
-
+    console.log(growingPeriod);
     return this.growingPeriodService.create(growingPeriod);
   }
 

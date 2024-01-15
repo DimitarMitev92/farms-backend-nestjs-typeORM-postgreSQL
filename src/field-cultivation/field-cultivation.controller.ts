@@ -13,6 +13,7 @@ import { FieldCultivation } from './field-cultivation.entity';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UserRightsDec } from 'src/auth/user-rights.decorator';
 import { UserRights } from 'src/user/user.entity';
+import { CreateFieldCultivationDto } from './dto/create-field-cultivation.dto';
 
 @Controller('field-cultivation')
 export class FieldCultivationController {
@@ -37,8 +38,21 @@ export class FieldCultivationController {
   @UseGuards(AuthGuard)
   @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR)
   @Post()
-  create(@Body() cultivation: FieldCultivation): Promise<FieldCultivation> {
-    return this.fieldCultivationService.create(cultivation);
+  create(
+    @Body() createFieldCultivationDto: Partial<CreateFieldCultivationDto>,
+  ): Promise<FieldCultivation> {
+    const fieldCultivation: FieldCultivation = {
+      startingDate: createFieldCultivationDto.startingDate,
+      cultivationId: createFieldCultivationDto.cultivationId,
+      machineryId: createFieldCultivationDto.machineryId,
+      growingPeriodId: createFieldCultivationDto.growingPeriodId,
+      id: undefined,
+      createdAt: undefined,
+      updatedAt: undefined,
+      deletedAt: undefined,
+    };
+
+    return this.fieldCultivationService.create(fieldCultivation);
   }
 
   @UseGuards(AuthGuard)
@@ -46,9 +60,9 @@ export class FieldCultivationController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() cultivation: FieldCultivation,
-  ): Promise<FieldCultivation> {
-    return this.fieldCultivationService.update(id, cultivation);
+    @Body() updateFieldCultivationDto: Partial<FieldCultivation>,
+  ): Promise<Partial<FieldCultivation>> {
+    return this.fieldCultivationService.update(id, updateFieldCultivationDto);
   }
 
   @UseGuards(AuthGuard)

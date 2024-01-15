@@ -21,20 +21,23 @@ export class FieldCultivation {
   @ManyToOne(() => Cultivation, (cultivation) => cultivation.id)
   @JoinColumn({ name: 'cultivation_id' })
   @IsUUID()
+  @IsNotEmpty()
   cultivationId: string;
 
   @ManyToOne(() => Machinery, (machinery) => machinery.id)
   @JoinColumn({ name: 'machinery_id' })
   @IsUUID()
+  @IsNotEmpty()
   machineryId: string;
 
   @ManyToOne(() => GrowingPeriod, (growingPeriod) => growingPeriod.id)
   @JoinColumn({ name: 'growing_process_id' })
   @IsUUID()
+  @IsNotEmpty()
   growingPeriodId: string;
 
-  @Column({ name: 'starting_date' })
-  @IsNotEmpty({ message: 'Past or present cannot be empty' })
+  @Column({ name: 'starting_date', nullable: true })
+  @IsNotEmpty()
   startingDate: Date;
 
   @CreateDateColumn({ name: 'created_at' })

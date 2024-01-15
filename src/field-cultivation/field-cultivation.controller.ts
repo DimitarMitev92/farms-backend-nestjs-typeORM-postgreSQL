@@ -14,7 +14,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { UserRightsDec } from 'src/auth/user-rights.decorator';
 import { UserRights } from 'src/user/user.entity';
 
-@Controller('cultivation')
+@Controller('field-cultivation')
 export class FieldCultivationController {
   constructor(
     private readonly fieldCultivationService: FieldCultivationService,
@@ -52,7 +52,7 @@ export class FieldCultivationController {
   }
 
   @UseGuards(AuthGuard)
-  @UserRightsDec(UserRights.OWNER)
+  @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR, UserRights.VIEWER)
   @Delete(':id')
   remove(@Param('id') id: string): Promise<void> {
     return this.fieldCultivationService.remove(id);

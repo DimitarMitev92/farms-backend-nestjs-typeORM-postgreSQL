@@ -30,11 +30,11 @@ export class FieldCultivation {
   @IsNotEmpty()
   machineryId: string;
 
-  @ManyToOne(() => GrowingProcess, (growingPeriod) => growingPeriod.id)
+  @ManyToOne(() => GrowingProcess, (growingProcess) => growingProcess.id)
   @JoinColumn({ name: 'growing_process_id' })
   @IsUUID()
   @IsNotEmpty()
-  growingPeriodId: string;
+  growingProcessId: string;
 
   @Column({ name: 'starting_date', nullable: true })
   @IsNotEmpty()

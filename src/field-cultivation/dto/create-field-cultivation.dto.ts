@@ -11,7 +11,7 @@ export class CreateFieldCultivationDto {
 
   @IsNotEmpty()
   @IsUUID()
-  growingPeriodId: string;
+  growingProcessId: string;
 
   @IsDate()
   startingDate: Date;

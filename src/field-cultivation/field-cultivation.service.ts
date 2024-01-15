@@ -62,17 +62,20 @@ export class FieldCultivationService {
     if (!machineryIdExist) {
       throw new BadRequestException('Invalid machinery id.');
     }
-    const growingPeriodIdExist = await this.growingProcessRepository.findOne({
-      where: { id: createFieldCultivationDto.growingPeriodId, deletedAt: null },
+    const growingProcessIdExist = await this.growingProcessRepository.findOne({
+      where: {
+        id: createFieldCultivationDto.growingProcessId,
+        deletedAt: null,
+      },
     });
-    if (!growingPeriodIdExist) {
-      throw new BadRequestException('Invalid growing period id.');
+    if (!growingProcessIdExist) {
+      throw new BadRequestException('Invalid growing process id.');
     }
     fieldCultivation.startingDate = createFieldCultivationDto.startingDate;
     fieldCultivation.cultivationId = createFieldCultivationDto.cultivationId;
     fieldCultivation.machineryId = createFieldCultivationDto.machineryId;
-    fieldCultivation.growingPeriodId =
-      createFieldCultivationDto.growingPeriodId;
+    fieldCultivation.growingProcessId =
+      createFieldCultivationDto.growingProcessId;
     return await this.fieldCultivationRepository.save(fieldCultivation);
   }
 
@@ -101,11 +104,14 @@ export class FieldCultivationService {
       throw new BadRequestException('Invalid machinery id.');
     }
 
-    const growingPeriodIdExist = await this.growingProcessRepository.findOne({
-      where: { id: updateFieldCultivationDto.growingPeriodId, deletedAt: null },
+    const growingProcessIdExist = await this.growingProcessRepository.findOne({
+      where: {
+        id: updateFieldCultivationDto.growingProcessId,
+        deletedAt: null,
+      },
     });
-    if (!growingPeriodIdExist) {
-      throw new BadRequestException('Invalid growing period id.');
+    if (!growingProcessIdExist) {
+      throw new BadRequestException('Invalid growing process id.');
     }
 
     Object.assign(fieldCultivation, updateFieldCultivationDto);

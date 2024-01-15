@@ -45,7 +45,7 @@ export class FieldCultivationController {
       startingDate: createFieldCultivationDto.startingDate,
       cultivationId: createFieldCultivationDto.cultivationId,
       machineryId: createFieldCultivationDto.machineryId,
-      growingPeriodId: createFieldCultivationDto.growingPeriodId,
+      growingProcessId: createFieldCultivationDto.growingProcessId,
       id: undefined,
       createdAt: undefined,
       updatedAt: undefined,

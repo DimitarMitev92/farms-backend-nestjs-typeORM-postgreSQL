@@ -80,20 +80,22 @@ export class FieldService {
     id: string,
     updateFieldDto: Partial<CreateFieldDto>,
   ): Promise<Field> {
-    const field = await this.fieldRepository.findOne({ where: { id } });
+    const field = await this.fieldRepository.findOne({
+      where: { id, deletedAt: null },
+    });
 
     if (!field) {
       throw new Error(`Field with id ${id} not found`);
     }
 
     const soilIdExist = await this.soilRepository.findOne({
-      where: { id: updateFieldDto.soilId },
+      where: { id: updateFieldDto.soilId, deletedAt: null },
     });
     if (!soilIdExist) {
       throw new BadRequestException('Invalid soil id.');
     }
     const farmIdExist = await this.farmRepository.findOne({
-      where: { id: updateFieldDto.farmId },
+      where: { id: updateFieldDto.farmId, deletedAt: null },
     });
     if (!farmIdExist) {
       throw new BadRequestException('Invalid farm id.');

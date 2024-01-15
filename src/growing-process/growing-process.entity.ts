@@ -12,7 +12,7 @@ import { Crop } from 'src/crop/crop.entity';
 import { Field } from 'src/field/field.entity';
 
 @Entity()
-export class GrowingPeriod {
+export class GrowingProcess {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

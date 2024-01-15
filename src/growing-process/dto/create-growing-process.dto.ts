@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsUUID } from 'class-validator';
 
-export class CreateGrowingPeriodDto {
+export class CreateGrowingProcessDto {
   @IsNotEmpty()
   @IsUUID()
   readonly cropId: string;

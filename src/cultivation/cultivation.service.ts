@@ -17,7 +17,7 @@ export class CultivationService {
 
   private async checkCultivationExists(id: string): Promise<Cultivation> {
     const cultivation = await this.cultivationRepository.findOne({
-      where: { id },
+      where: { id, deletedAt: null },
     });
     if (!cultivation) {
       throw new NotFoundException("Cultivation with this id doesn't exist");
@@ -38,7 +38,7 @@ export class CultivationService {
   ): Promise<Cultivation> {
     const cultivation = new Cultivation();
     const cultivationName = await this.cultivationRepository.findOne({
-      where: { cultivation: createCultivationDto.cultivation },
+      where: { cultivation: createCultivationDto.cultivation, deletedAt: null },
     });
     if (cultivationName) {
       throw new BadRequestException(

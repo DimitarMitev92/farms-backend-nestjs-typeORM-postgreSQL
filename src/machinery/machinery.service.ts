@@ -20,7 +20,7 @@ export class MachineryService {
 
   private async checkMachineryExists(id: string): Promise<Machinery> {
     const machinery = await this.machineryRepository.findOne({
-      where: { id },
+      where: { id, deletedAt: null },
     });
     if (!machinery) {
       throw new NotFoundException("Machinery with this id doesn't exist");
@@ -41,6 +41,7 @@ export class MachineryService {
     const identificationNumberExist = await this.machineryRepository.findOne({
       where: {
         identificationNumber: createMachineryDto.identificationNumber,
+        deletedAt: null,
       },
     });
     if (identificationNumberExist) {
@@ -49,7 +50,7 @@ export class MachineryService {
       );
     }
     const farmIdExist = await this.farmRepository.findOne({
-      where: { id: createMachineryDto.farmId },
+      where: { id: createMachineryDto.farmId, deletedAt: null },
     });
     if (!farmIdExist) {
       throw new BadRequestException('Invalid farm id.');
@@ -65,7 +66,9 @@ export class MachineryService {
     id: string,
     updateMachineryDto: Partial<CreateMachineryDto>,
   ): Promise<Machinery> {
-    const machinery = await this.machineryRepository.findOne({ where: { id } });
+    const machinery = await this.machineryRepository.findOne({
+      where: { id, deletedAt: null },
+    });
     if (!machinery) {
       throw new Error(`Machinery with id ${id} not found`);
     }
@@ -73,6 +76,7 @@ export class MachineryService {
     const identificationNumberExist = await this.machineryRepository.findOne({
       where: {
         identificationNumber: updateMachineryDto.identificationNumber,
+        deletedAt: null,
       },
     });
     if (identificationNumberExist) {
@@ -82,7 +86,7 @@ export class MachineryService {
     }
 
     const farmIdExist = await this.machineryRepository.findOne({
-      where: { farmId: updateMachineryDto.farmId },
+      where: { farmId: updateMachineryDto.farmId, deletedAt: null },
     });
     if (!farmIdExist) {
       throw new BadRequestException('Invalid farm id.');

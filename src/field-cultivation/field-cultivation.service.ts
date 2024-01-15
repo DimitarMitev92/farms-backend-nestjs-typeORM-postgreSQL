@@ -9,7 +9,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateFieldCultivationDto } from './dto/create-field-cultivation.dto';
-import { GrowingPeriod } from 'src/growing-period/growing-period.entity';
+import { GrowingProcess } from 'src/growing-process/growing-process.entity';
 
 @Injectable()
 export class FieldCultivationService {
@@ -20,15 +20,15 @@ export class FieldCultivationService {
     private readonly cultivationRepository: Repository<Cultivation>,
     @InjectRepository(Machinery)
     private readonly machineryRepository: Repository<Machinery>,
-    @InjectRepository(GrowingPeriod)
-    private readonly growingProcessRepository: Repository<GrowingPeriod>,
+    @InjectRepository(GrowingProcess)
+    private readonly growingProcessRepository: Repository<GrowingProcess>,
   ) {}
 
   private async checkFieldCultivationExists(
     id: string,
   ): Promise<FieldCultivation> {
     const fieldCultivation = await this.fieldCultivationRepository.findOne({
-      where: { id },
+      where: { id, deletedAt: null },
     });
     if (!fieldCultivation) {
       throw new NotFoundException(
@@ -51,19 +51,19 @@ export class FieldCultivationService {
   ): Promise<FieldCultivation> {
     const fieldCultivation = new FieldCultivation();
     const cultivationIdExist = await this.cultivationRepository.findOne({
-      where: { id: createFieldCultivationDto.cultivationId },
+      where: { id: createFieldCultivationDto.cultivationId, deletedAt: null },
     });
     if (!cultivationIdExist) {
       throw new BadRequestException('Invalid cultivation id.');
     }
     const machineryIdExist = await this.machineryRepository.findOne({
-      where: { id: createFieldCultivationDto.machineryId },
+      where: { id: createFieldCultivationDto.machineryId, deletedAt: null },
     });
     if (!machineryIdExist) {
       throw new BadRequestException('Invalid machinery id.');
     }
     const growingPeriodIdExist = await this.growingProcessRepository.findOne({
-      where: { id: createFieldCultivationDto.growingPeriodId },
+      where: { id: createFieldCultivationDto.growingPeriodId, deletedAt: null },
     });
     if (!growingPeriodIdExist) {
       throw new BadRequestException('Invalid growing period id.');
@@ -81,28 +81,28 @@ export class FieldCultivationService {
     updateFieldCultivationDto: Partial<CreateFieldCultivationDto>,
   ): Promise<FieldCultivation> {
     const fieldCultivation = await this.fieldCultivationRepository.findOne({
-      where: { id },
+      where: { id, deletedAt: null },
     });
     if (!fieldCultivation) {
       throw new Error(`Field cultivation with id ${id} not found`);
     }
 
     const cultivationIdExist = await this.cultivationRepository.findOne({
-      where: { id: updateFieldCultivationDto.cultivationId },
+      where: { id: updateFieldCultivationDto.cultivationId, deletedAt: null },
     });
     if (!cultivationIdExist) {
       throw new BadRequestException('Invalid cultivation id.');
     }
 
     const machineryIdExist = await this.machineryRepository.findOne({
-      where: { id: updateFieldCultivationDto.machineryId },
+      where: { id: updateFieldCultivationDto.machineryId, deletedAt: null },
     });
     if (!machineryIdExist) {
       throw new BadRequestException('Invalid machinery id.');
     }
 
     const growingPeriodIdExist = await this.growingProcessRepository.findOne({
-      where: { id: updateFieldCultivationDto.growingPeriodId },
+      where: { id: updateFieldCultivationDto.growingPeriodId, deletedAt: null },
     });
     if (!growingPeriodIdExist) {
       throw new BadRequestException('Invalid growing period id.');

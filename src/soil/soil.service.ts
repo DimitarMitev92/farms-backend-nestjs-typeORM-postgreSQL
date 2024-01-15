@@ -17,7 +17,7 @@ export class SoilService {
 
   private async checkSoilExists(id: string): Promise<Soil> {
     const soil = await this.soilRepository.findOne({
-      where: { id },
+      where: { id, deletedAt: null },
     });
     if (!soil) {
       throw new NotFoundException("Crop with this id doesn't exist");
@@ -36,7 +36,7 @@ export class SoilService {
   async create(createSoilDto: CreateSoilDto): Promise<Soil> {
     const soil = new Soil();
     const soilName = await this.soilRepository.findOne({
-      where: { soil: createSoilDto.soil },
+      where: { soil: createSoilDto.soil, deletedAt: null },
     });
     if (soilName) {
       throw new BadRequestException(

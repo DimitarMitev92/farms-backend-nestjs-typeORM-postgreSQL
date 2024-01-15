@@ -17,7 +17,7 @@ export class CropService {
 
   private async checkCropExists(id: string): Promise<Crop> {
     const crop = await this.cropRepository.findOne({
-      where: { id },
+      where: { id, deletedAt: null },
     });
     if (!crop) {
       throw new NotFoundException("Crop with this id doesn't exist");
@@ -36,7 +36,7 @@ export class CropService {
   async create(createCropDto: CreateCropDto): Promise<Crop> {
     const crop = new Crop();
     const cropName = await this.cropRepository.findOne({
-      where: { crop: createCropDto.crop },
+      where: { crop: createCropDto.crop, deletedAt: null },
     });
     if (cropName) {
       throw new BadRequestException(

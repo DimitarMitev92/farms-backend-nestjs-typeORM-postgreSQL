@@ -5,7 +5,7 @@ import { FieldCultivationController } from './field-cultivation.controller';
 import { FieldCultivationService } from './field-cultivation.service';
 import { Cultivation } from 'src/cultivation/cultivation.entity';
 import { Machinery } from 'src/machinery/machinery.entity';
-import { GrowingPeriod } from 'src/growing-period/growing-period.entity';
+import { GrowingProcess } from 'src/growing-process/growing-process.entity';
 
 @Module({
   imports: [
@@ -13,7 +13,7 @@ import { GrowingPeriod } from 'src/growing-period/growing-period.entity';
       FieldCultivation,
       Cultivation,
       Machinery,
-      GrowingPeriod,
+      GrowingProcess,
     ]),
   ],
   controllers: [FieldCultivationController],

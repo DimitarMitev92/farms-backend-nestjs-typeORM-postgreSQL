@@ -11,7 +11,7 @@ import {
 import { IsNotEmpty, IsUUID } from 'class-validator';
 import { Cultivation } from 'src/cultivation/cultivation.entity';
 import { Machinery } from 'src/machinery/machinery.entity';
-import { GrowingPeriod } from 'src/growing-period/growing-period.entity';
+import { GrowingProcess } from 'src/growing-process/growing-process.entity';
 
 @Entity()
 export class FieldCultivation {
@@ -30,7 +30,7 @@ export class FieldCultivation {
   @IsNotEmpty()
   machineryId: string;
 
-  @ManyToOne(() => GrowingPeriod, (growingPeriod) => growingPeriod.id)
+  @ManyToOne(() => GrowingProcess, (growingPeriod) => growingPeriod.id)
   @JoinColumn({ name: 'growing_process_id' })
   @IsUUID()
   @IsNotEmpty()

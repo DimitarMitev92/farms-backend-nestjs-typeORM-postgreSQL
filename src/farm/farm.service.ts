@@ -17,7 +17,7 @@ export class FarmService {
 
   private async checkFarmExists(id: string): Promise<Farm> {
     const farm = await this.farmRepository.findOne({
-      where: { id },
+      where: { id, deletedAt: null },
     });
     if (!farm) {
       throw new NotFoundException("Farm with this id doesn't exist");
@@ -36,7 +36,7 @@ export class FarmService {
   async create(createFarmDto: CreateFarmDto): Promise<Farm> {
     const farm = new Farm();
     const farmName = await this.farmRepository.findOne({
-      where: { name: createFarmDto.name },
+      where: { name: createFarmDto.name, deletedAt: null },
     });
     if (farmName) {
       throw new BadRequestException(
@@ -44,7 +44,7 @@ export class FarmService {
       );
     }
     const farmLocation = await this.farmRepository.findOne({
-      where: { location: createFarmDto.location },
+      where: { location: createFarmDto.location, deletedAt: null },
     });
     if (farmLocation) {
       throw new BadRequestException(
@@ -60,7 +60,9 @@ export class FarmService {
     id: string,
     updateFarmDto: Partial<CreateFarmDto>,
   ): Promise<Farm> {
-    const farm = await this.farmRepository.findOne({ where: { id } });
+    const farm = await this.farmRepository.findOne({
+      where: { id, deletedAt: null },
+    });
 
     if (!farm) {
       throw new Error(`Farm with id ${id} not found`);

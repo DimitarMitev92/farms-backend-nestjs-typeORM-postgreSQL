@@ -21,7 +21,7 @@ export class Field {
   @IsNotEmpty({ message: 'Name cannot be empty' })
   name: string;
 
-  @Column({ type: 'polygon' })
+  @Column()
   @IsNotEmpty({ message: 'Boundaries cannot be empty' })
   boundaries: string;
 

@@ -2,11 +2,11 @@ import {
   Controller,
   Get,
   Post,
-  Put,
   Delete,
   Body,
   Param,
   UseGuards,
+  Patch,
 } from '@nestjs/common';
 import { MachineryService } from './machinery.service';
 import { Machinery } from './machinery.entity';
@@ -42,7 +42,7 @@ export class MachineryController {
 
   @UseGuards(AuthGuard)
   @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR)
-  @Put(':id')
+  @Patch(':id')
   update(
     @Param('id') id: string,
     @Body() createMachineryDto: CreateMachineryDto,

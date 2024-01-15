@@ -2,11 +2,11 @@ import {
   Controller,
   Get,
   Post,
-  Put,
   Delete,
   Body,
   Param,
   UseGuards,
+  Patch,
 } from '@nestjs/common';
 import { CultivationService } from './cultivation.service';
 import { Cultivation } from './cultivation.entity';
@@ -44,7 +44,7 @@ export class CultivationController {
 
   @UseGuards(AuthGuard)
   @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR)
-  @Put(':id')
+  @Patch(':id')
   update(
     @Param('id') id: string,
     @Body() updateCultivationDto: CreateCultivationDto,

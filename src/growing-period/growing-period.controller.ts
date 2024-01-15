@@ -2,11 +2,11 @@ import {
   Controller,
   Get,
   Post,
-  Put,
   Delete,
   Body,
   Param,
   UseGuards,
+  Patch,
 } from '@nestjs/common';
 import { GrowingPeriodService } from './growing-period.service';
 import { GrowingPeriod } from './growing-period.entity';
@@ -53,7 +53,7 @@ export class GrowingPeriodController {
 
   @UseGuards(AuthGuard)
   @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR)
-  @Put(':id')
+  @Patch(':id')
   update(
     @Param('id') id: string,
     @Body() updateGrowingProcessDto: Partial<CreateGrowingPeriodDto>,

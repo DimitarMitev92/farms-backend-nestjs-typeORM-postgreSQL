@@ -2,11 +2,11 @@ import {
   Controller,
   Get,
   Post,
-  Put,
   Delete,
   Body,
   Param,
   UseGuards,
+  Patch,
 } from '@nestjs/common';
 import { FarmService } from './farm.service';
 import { Farm } from './farm.entity';
@@ -51,7 +51,7 @@ export class FarmController {
 
   @UseGuards(AuthGuard)
   @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR)
-  @Put(':id')
+  @Patch(':id')
   update(
     @Param('id') id: string,
     @Body() updatedFarmDto: Partial<CreateFarmDto>,

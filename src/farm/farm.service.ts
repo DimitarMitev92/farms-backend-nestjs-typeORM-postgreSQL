@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Farm } from './farm.entity';
@@ -11,17 +15,45 @@ export class FarmService {
     private readonly farmRepository: Repository<Farm>,
   ) {}
 
+  private async checkFarmExists(id: string): Promise<Farm> {
+    const farm = await this.farmRepository.findOne({
+      where: { id },
+    });
+    if (!farm) {
+      throw new NotFoundException("Farm with this id doesn't exist");
+    }
+    return farm;
+  }
+
   async findAll(): Promise<Farm[]> {
     return this.farmRepository.find();
   }
 
   async findOne(id: string): Promise<Farm> {
-    return this.farmRepository.findOne({ where: { id } });
+    return this.checkFarmExists(id);
   }
 
   async create(createFarmDto: CreateFarmDto): Promise<Farm> {
-    const newFarm = this.farmRepository.create(createFarmDto);
-    return await this.farmRepository.save(newFarm);
+    const farm = new Farm();
+    const farmName = await this.farmRepository.findOne({
+      where: { name: createFarmDto.name },
+    });
+    if (farmName) {
+      throw new BadRequestException(
+        'Farm with this name is already exist. Change it!',
+      );
+    }
+    const farmLocation = await this.farmRepository.findOne({
+      where: { location: createFarmDto.location },
+    });
+    if (farmLocation) {
+      throw new BadRequestException(
+        'Farm with this location is already exist. Change it!',
+      );
+    }
+    farm.name = createFarmDto.name;
+    farm.location = createFarmDto.location;
+    return await this.farmRepository.save(farm);
   }
 
   async update(

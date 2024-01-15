@@ -2,11 +2,11 @@ import {
   Controller,
   Get,
   Post,
-  Put,
   Delete,
   Body,
   Param,
   UseGuards,
+  Patch,
 } from '@nestjs/common';
 import { FieldCultivationService } from './field-cultivation.service';
 import { FieldCultivation } from './field-cultivation.entity';
@@ -43,7 +43,7 @@ export class FieldCultivationController {
 
   @UseGuards(AuthGuard)
   @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR)
-  @Put(':id')
+  @Patch(':id')
   update(
     @Param('id') id: string,
     @Body() cultivation: FieldCultivation,

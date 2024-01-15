@@ -17,7 +17,7 @@ export class Farm {
   @IsNotEmpty({ message: 'Name cannot be empty' })
   name: string;
 
-  @Column({ type: 'point' })
+  @Column()
   @IsNotEmpty({ message: 'Location cannot be empty' })
   location: string;
 

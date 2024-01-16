@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
@@ -17,18 +22,22 @@ export class AuthService {
     email: string,
     password: string,
   ): Promise<{ access_token: string }> {
-    const user = await this.userService.findOneByEmail(email);
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    try {
+      const user = await this.userService.findOneByEmail(email);
+      if (!user || !(await bcrypt.compare(password, user.password))) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
+      const payload = { id: user.id, email: user.email, rights: user.rights };
+      return { access_token: await this.jwtService.signAsync(payload) };
+    } catch (error) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    const payload = { id: user.id, email: user.email, rights: user.rights };
-    return { access_token: await this.jwtService.signAsync(payload) };
   }
 
   async register(
     createUserDto: CreateUserDto,
   ): Promise<
-    string | { statusCode: number; message: string } | { access_token: string }
+    { access_token: string } | { statusCode: number; message: string }
   > {
     try {
       const saltRounds = 10;
@@ -41,6 +50,7 @@ export class AuthService {
         rights: UserRights.VIEWER,
         password: hashedPassword,
       }) as DeepPartial<User>;
+
       const returnedUserFromBase = await this.userService.create(data);
       const payload = {
         id: returnedUserFromBase.id,
@@ -54,9 +64,9 @@ export class AuthService {
         error instanceof QueryFailedError &&
         error.message.includes('duplicate key')
       ) {
-        return { statusCode: 400, message: 'Email already exists' };
+        throw new ConflictException('Email already exists');
       }
-      return { statusCode: 500, message: 'Internal Server Error' };
+      throw new InternalServerErrorException('Internal Server Error');
     }
   }
 }

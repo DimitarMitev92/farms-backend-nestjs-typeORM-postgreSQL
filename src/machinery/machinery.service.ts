@@ -96,6 +96,32 @@ export class MachineryService {
     return await this.machineryRepository.save(machinery);
   }
 
+  async transfer(
+    id: string,
+    updateMachineryDto: Partial<CreateMachineryDto>,
+    farmId: string,
+  ): Promise<Machinery> {
+    const machinery = await this.machineryRepository.findOne({
+      where: { id, deletedAt: null },
+    });
+    if (!machinery) {
+      throw new Error(`Machinery with id ${id} not found`);
+    }
+
+    const farmIdExist = await this.farmRepository.findOne({
+      where: { id: farmId, deletedAt: null },
+    });
+    if (!farmIdExist) {
+      throw new BadRequestException('Invalid farm id.');
+    }
+
+    machinery.farmId = farmId;
+
+    Object.assign(machinery, updateMachineryDto);
+
+    return await this.machineryRepository.save(machinery);
+  }
+
   async remove(id: string): Promise<void> {
     await this.machineryRepository.update(id, { deletedAt: new Date() });
   }

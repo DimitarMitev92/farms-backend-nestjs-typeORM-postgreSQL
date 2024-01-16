@@ -12,6 +12,7 @@ import { Farm } from 'src/farm/farm.entity';
 import { FieldCountDto } from './dto/field-count.dto';
 import { Crop } from 'src/crop/crop.entity';
 import { GrowingProcess } from 'src/growing-process/growing-process.entity';
+import { FieldSoilDto } from './dto/field-soil.dto';
 
 @Injectable()
 export class FieldService {
@@ -132,18 +133,29 @@ export class FieldService {
       .getRawMany();
   }
 
-  //   SELECT
-  //   count(field.id) AS fieldId,
-  //   farm.name AS farmName,
-  //   crop.crop AS cropName
-  // FROM
-  //   field
-  // INNER JOIN
-  //   farm ON field.farm_id = farm.id
-  // INNER JOIN
-  // 	growing_process ON field.id = growing_process.field_id
-  // INNER JOIN
-  // 	crop ON crop.id = growing_process.crop_id
-  // GROUP BY
-  // 	farm.name, crop.crop
+  async getMostCommonSoil(): Promise<FieldSoilDto[]> {
+    return this.fieldRepository
+      .createQueryBuilder('field')
+      .select(['COUNT(field.id) AS count', 'soil.soil AS soilType'])
+      .innerJoin(Soil, 'soil', 'field.soil_id = soil.id')
+      .innerJoin(Farm, 'farm', 'farm.id = field.farm_id')
+      .groupBy('soil.soil')
+      .limit(1)
+      .getRawMany();
+  }
 }
+
+//   SELECT
+//   count(field.id) AS fieldId,
+//   farm.name AS farmName,
+//   crop.crop AS cropName
+// FROM
+//   field
+// INNER JOIN
+//   farm ON field.farm_id = farm.id
+// INNER JOIN
+// 	growing_process ON field.id = growing_process.field_id
+// INNER JOIN
+// 	crop ON crop.id = growing_process.crop_id
+// GROUP BY
+// 	farm.name, crop.crop

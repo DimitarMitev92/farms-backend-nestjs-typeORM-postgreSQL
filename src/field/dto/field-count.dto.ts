@@ -1,5 +1,4 @@
 export class FieldCountDto {
-  readonly fieldId: string;
-  readonly farmName: string;
-  readonly cropName: string;
+  readonly count: string;
+  readonly soilType: string;
 }

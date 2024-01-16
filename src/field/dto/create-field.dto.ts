@@ -5,7 +5,7 @@ export class CreateFieldDto {
   readonly name: string;
 
   @IsNotEmpty()
-  readonly boundaries: string;
+  readonly boundaries: { type: string; coordinates: number[][] };
 
   @IsNotEmpty()
   @IsUUID()

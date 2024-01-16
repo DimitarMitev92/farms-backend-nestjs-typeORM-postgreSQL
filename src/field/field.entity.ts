@@ -21,9 +21,9 @@ export class Field {
   @IsNotEmpty({ message: 'Name cannot be empty' })
   name: string;
 
-  @Column()
+  @Column({ type: 'jsonb' })
   @IsNotEmpty({ message: 'Boundaries cannot be empty' })
-  boundaries: string;
+  boundaries: { type: string; coordinates: number[][] };
 
   @ManyToOne(() => Soil, (soil) => soil.id)
   @JoinColumn({ name: 'soil_id' })

@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Table1705388305312 implements MigrationInterface {
-    name = 'Table1705388305312'
+export class Table1705392947096 implements MigrationInterface {
+    name = 'Table1705392947096'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "user" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "firstName" character varying NOT NULL, "lastName" character varying NOT NULL, "email" character varying NOT NULL, "password" character varying NOT NULL, "rights" "public"."user_rights_enum" NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP, CONSTRAINT "UQ_e12875dfb3b1d92d7d7c5377e22" UNIQUE ("email"), CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id"))`);
@@ -10,8 +10,8 @@ export class Table1705388305312 implements MigrationInterface {
         await queryRunner.query(`CREATE TABLE "farm" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "location" character varying NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP, CONSTRAINT "PK_3bf246b27a3b6678dfc0b7a3f64" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "field" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "boundaries" character varying NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP, "soil_id" uuid, "farm_id" uuid, CONSTRAINT "PK_39379bba786d7a75226b358f81e" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "growing_process" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP, "crop_id" uuid, "field_id" uuid, CONSTRAINT "PK_d7f9cf5bdb1acd4660281c4319d" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "cultivation" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "cultivation" character varying NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP, CONSTRAINT "PK_4cc4355a3e4865a33d580692b71" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "machinery" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "brand" character varying NOT NULL, "model" character varying NOT NULL, "identification_number" character varying NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP, "farm_id" uuid, CONSTRAINT "PK_96bd84e67379eb9e594494dff40" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "cultivation" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "cultivation" character varying NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP, CONSTRAINT "PK_4cc4355a3e4865a33d580692b71" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "field_cultivation" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "starting_date" TIMESTAMP, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP, "cultivation_id" uuid, "machinery_id" uuid, "growing_process_id" uuid, CONSTRAINT "PK_ed9641bf27693edcdbacadbbffb" PRIMARY KEY ("id"))`);
         await queryRunner.query(`ALTER TABLE "field" ADD CONSTRAINT "FK_b0b5c163d6cebfcddb7e79a975b" FOREIGN KEY ("soil_id") REFERENCES "soil"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "field" ADD CONSTRAINT "FK_725288d262a578ffe1d8d1c77d4" FOREIGN KEY ("farm_id") REFERENCES "farm"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
@@ -33,8 +33,8 @@ export class Table1705388305312 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "field" DROP CONSTRAINT "FK_725288d262a578ffe1d8d1c77d4"`);
         await queryRunner.query(`ALTER TABLE "field" DROP CONSTRAINT "FK_b0b5c163d6cebfcddb7e79a975b"`);
         await queryRunner.query(`DROP TABLE "field_cultivation"`);
-        await queryRunner.query(`DROP TABLE "machinery"`);
         await queryRunner.query(`DROP TABLE "cultivation"`);
+        await queryRunner.query(`DROP TABLE "machinery"`);
         await queryRunner.query(`DROP TABLE "growing_process"`);
         await queryRunner.query(`DROP TABLE "field"`);
         await queryRunner.query(`DROP TABLE "farm"`);

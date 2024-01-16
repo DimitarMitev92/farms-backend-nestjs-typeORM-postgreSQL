@@ -62,6 +62,13 @@ export class MachineryController {
   }
 
   @UseGuards(AuthGuard)
+  @UserRightsDec(UserRights.OWNER)
+  @Delete(':id')
+  remove(@Param('id') id: string): Promise<void> {
+    return this.machineryService.remove(id);
+  }
+
+  @UseGuards(AuthGuard)
   @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR)
   @Patch('/transfer/:id')
   transferMachinery(
@@ -70,12 +77,5 @@ export class MachineryController {
     @Body('farmId') farmId: string,
   ): Promise<Partial<Machinery>> {
     return this.machineryService.transfer(id, updateMachineryDto, farmId);
-  }
-
-  @UseGuards(AuthGuard)
-  @UserRightsDec(UserRights.OWNER)
-  @Delete(':id')
-  remove(@Param('id') id: string): Promise<void> {
-    return this.machineryService.remove(id);
   }
 }

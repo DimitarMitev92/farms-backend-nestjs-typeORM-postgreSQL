@@ -96,6 +96,10 @@ export class MachineryService {
     return await this.machineryRepository.save(machinery);
   }
 
+  async remove(id: string): Promise<void> {
+    await this.machineryRepository.update(id, { deletedAt: new Date() });
+  }
+
   async transfer(
     id: string,
     updateMachineryDto: Partial<CreateMachineryDto>,
@@ -120,9 +124,5 @@ export class MachineryService {
     Object.assign(machinery, updateMachineryDto);
 
     return await this.machineryRepository.save(machinery);
-  }
-
-  async remove(id: string): Promise<void> {
-    await this.machineryRepository.update(id, { deletedAt: new Date() });
   }
 }

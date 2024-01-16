@@ -9,6 +9,9 @@ import { Field } from './field.entity';
 import { CreateFieldDto } from './dto/create-field.dto';
 import { Soil } from 'src/soil/soil.entity';
 import { Farm } from 'src/farm/farm.entity';
+import { FieldCountDto } from './dto/field-count.dto';
+import { Crop } from 'src/crop/crop.entity';
+import { GrowingProcess } from 'src/growing-process/growing-process.entity';
 
 @Injectable()
 export class FieldService {
@@ -109,4 +112,38 @@ export class FieldService {
   async remove(id: string): Promise<void> {
     await this.fieldRepository.update(id, { deletedAt: new Date() });
   }
+
+  async getFieldCountByFarmAndCrop(): Promise<FieldCountDto[]> {
+    return this.fieldRepository
+      .createQueryBuilder('field')
+      .select([
+        'COUNT(field.id) AS fieldId',
+        'farm.name AS farmName',
+        'crop.crop AS cropName',
+      ])
+      .innerJoin(Farm, 'farm', 'field.farm_id = farm.id')
+      .innerJoin(
+        GrowingProcess,
+        'growing_process',
+        'field.id = growing_process.field_id',
+      )
+      .innerJoin(Crop, 'crop', 'crop.id = growing_process.crop_id')
+      .groupBy('farm.name, crop.crop')
+      .getRawMany();
+  }
+
+  //   SELECT
+  //   count(field.id) AS fieldId,
+  //   farm.name AS farmName,
+  //   crop.crop AS cropName
+  // FROM
+  //   field
+  // INNER JOIN
+  //   farm ON field.farm_id = farm.id
+  // INNER JOIN
+  // 	growing_process ON field.id = growing_process.field_id
+  // INNER JOIN
+  // 	crop ON crop.id = growing_process.crop_id
+  // GROUP BY
+  // 	farm.name, crop.crop
 }

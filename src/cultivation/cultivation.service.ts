@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,17 +17,29 @@ export class CultivationService {
   ) {}
 
   private async checkCultivationExists(id: string): Promise<Cultivation> {
-    const cultivation = await this.cultivationRepository.findOne({
-      where: { id, deletedAt: null },
-    });
-    if (!cultivation) {
-      throw new NotFoundException("Cultivation with this id doesn't exist");
+    try {
+      const cultivation = await this.cultivationRepository.findOne({
+        where: { id, deletedAt: null },
+      });
+      if (!cultivation) {
+        throw new NotFoundException("Cultivation with this id doesn't exist");
+      }
+      return cultivation;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Error while fetching cultivation data',
+      );
     }
-    return cultivation;
   }
 
   async findAll(): Promise<Cultivation[]> {
-    return this.cultivationRepository.find();
+    try {
+      return this.cultivationRepository.find();
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Error while fetching cultivations',
+      );
+    }
   }
 
   async findOne(id: string): Promise<Cultivation> {
@@ -36,32 +49,65 @@ export class CultivationService {
   async create(
     createCultivationDto: CreateCultivationDto,
   ): Promise<Cultivation> {
-    const cultivation = new Cultivation();
-    const cultivationName = await this.cultivationRepository.findOne({
-      where: { cultivation: createCultivationDto.cultivation, deletedAt: null },
-    });
-    if (cultivationName) {
-      throw new BadRequestException(
-        'Crop with this name is already exist. Change it!',
+    try {
+      const cultivation = new Cultivation();
+      const cultivationName = await this.cultivationRepository.findOne({
+        where: {
+          cultivation: createCultivationDto.cultivation,
+          deletedAt: null,
+        },
+      });
+      if (cultivationName) {
+        throw new BadRequestException(
+          'Cultivation with this name already exists. Change it!',
+        );
+      }
+      cultivation.cultivation = createCultivationDto.cultivation;
+      return await this.cultivationRepository.save(cultivation);
+    } catch (error) {
+      if (
+        error instanceof BadRequestException ||
+        error instanceof NotFoundException
+      ) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Error while creating cultivation',
       );
     }
-    cultivation.cultivation = createCultivationDto.cultivation;
-    return await this.cultivationRepository.save(cultivation);
   }
 
   async update(
     id: string,
     updateCultivationDto: CreateCultivationDto,
   ): Promise<Cultivation> {
-    const cultivation = await this.checkCultivationExists(id);
-    cultivation.cultivation = updateCultivationDto.cultivation;
-    return await this.cultivationRepository.save(cultivation);
+    try {
+      const cultivation = await this.checkCultivationExists(id);
+      cultivation.cultivation = updateCultivationDto.cultivation;
+      return await this.cultivationRepository.save(cultivation);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Error while updating cultivation',
+      );
+    }
   }
 
   async remove(id: string): Promise<void> {
-    const cultivation = await this.checkCultivationExists(id);
-    await this.cultivationRepository.update(cultivation.id, {
-      deletedAt: new Date(),
-    });
+    try {
+      const cultivation = await this.checkCultivationExists(id);
+      await this.cultivationRepository.update(cultivation.id, {
+        deletedAt: new Date(),
+      });
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Error while removing cultivation',
+      );
+    }
   }
 }

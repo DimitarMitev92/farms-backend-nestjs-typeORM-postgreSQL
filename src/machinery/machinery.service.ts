@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { Machinery } from './machinery.entity';
 import { CreateMachineryDto } from './dto/create-machinery.dto';
 import { Farm } from 'src/farm/farm.entity';
+import { MostMachineriesDto } from './dto/most-machineries.dto';
 
 @Injectable()
 export class MachineryService {
@@ -124,5 +125,18 @@ export class MachineryService {
     Object.assign(machinery, updateMachineryDto);
 
     return await this.machineryRepository.save(machinery);
+  }
+
+  async mostMachineries(): Promise<MostMachineriesDto[]> {
+    return this.machineryRepository
+      .createQueryBuilder('machinery')
+      .select([
+        'COUNT(machinery.id) AS countMachinery',
+        'farm.name AS farmName',
+      ])
+      .innerJoin(Farm, 'farm', 'farm.id = machinery.farm_id')
+      .groupBy('farm.name')
+      .orderBy('countMachinery', 'DESC')
+      .getRawMany();
   }
 }

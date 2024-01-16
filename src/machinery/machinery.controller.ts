@@ -14,10 +14,29 @@ import { CreateMachineryDto } from './dto/create-machinery.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UserRightsDec } from 'src/auth/user-rights.decorator';
 import { UserRights } from 'src/user/user.entity';
+import { MostMachineriesDto } from './dto/most-machineries.dto';
 
 @Controller('machinery')
 export class MachineryController {
   constructor(private readonly machineryService: MachineryService) {}
+
+  @UseGuards(AuthGuard)
+  @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR)
+  @Patch('/transfer/:id')
+  transferMachinery(
+    @Param('id') id: string,
+    @Body() updateMachineryDto: Partial<CreateMachineryDto>,
+    @Body('farmId') farmId: string,
+  ): Promise<Partial<Machinery>> {
+    return this.machineryService.transfer(id, updateMachineryDto, farmId);
+  }
+
+  @UseGuards(AuthGuard)
+  @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR, UserRights.VIEWER)
+  @Get('/mostMachineries')
+  mostMachineries(): Promise<MostMachineriesDto[]> {
+    return this.machineryService.mostMachineries();
+  }
 
   @UseGuards(AuthGuard)
   @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR, UserRights.VIEWER)
@@ -66,16 +85,5 @@ export class MachineryController {
   @Delete(':id')
   remove(@Param('id') id: string): Promise<void> {
     return this.machineryService.remove(id);
-  }
-
-  @UseGuards(AuthGuard)
-  @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR)
-  @Patch('/transfer/:id')
-  transferMachinery(
-    @Param('id') id: string,
-    @Body() updateMachineryDto: Partial<CreateMachineryDto>,
-    @Body('farmId') farmId: string,
-  ): Promise<Partial<Machinery>> {
-    return this.machineryService.transfer(id, updateMachineryDto, farmId);
   }
 }

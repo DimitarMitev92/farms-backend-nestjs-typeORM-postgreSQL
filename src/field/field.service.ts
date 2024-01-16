@@ -159,3 +159,13 @@ export class FieldService {
 // 	crop ON crop.id = growing_process.crop_id
 // GROUP BY
 // 	farm.name, crop.crop
+
+// SELECT count(field.id) AS count, soil.soil AS soilType
+// FROM
+// 	soil
+// INNER JOIN
+// 	field ON field.soil_id = soil.id
+// INNER JOIN
+// 	farm ON field.farm_id = farm.id
+// GROUP BY soil.soil
+// LIMIT 1

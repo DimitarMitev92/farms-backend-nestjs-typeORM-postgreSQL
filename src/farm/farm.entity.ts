@@ -17,9 +17,9 @@ export class Farm {
   @IsNotEmpty({ message: 'Name cannot be empty' })
   name: string;
 
-  @Column()
+  @Column({ type: 'simple-array' })
   @IsNotEmpty({ message: 'Location cannot be empty' })
-  location: string;
+  location: number[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

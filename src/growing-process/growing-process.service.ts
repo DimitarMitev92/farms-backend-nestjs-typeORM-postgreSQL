@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -22,17 +23,31 @@ export class GrowingProcessService {
   ) {}
 
   private async checkGrowingProcessExists(id: string): Promise<GrowingProcess> {
-    const growingProcess = await this.growingProcessRepository.findOne({
-      where: { id, deletedAt: null },
-    });
-    if (!growingProcess) {
-      throw new NotFoundException("Growing process with this id doesn't exist");
+    try {
+      const growingProcess = await this.growingProcessRepository.findOne({
+        where: { id, deletedAt: null },
+      });
+      if (!growingProcess) {
+        throw new NotFoundException(
+          "Growing process with this id doesn't exist",
+        );
+      }
+      return growingProcess;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Error while fetching growing process data',
+      );
     }
-    return growingProcess;
   }
 
   async findAll(): Promise<GrowingProcess[]> {
-    return this.growingProcessRepository.find();
+    try {
+      return this.growingProcessRepository.find();
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Error while fetching growing processes',
+      );
+    }
   }
 
   async findOne(id: string): Promise<GrowingProcess> {
@@ -42,55 +57,85 @@ export class GrowingProcessService {
   async create(
     createGrowingProcessDto: CreateGrowingProcessDto,
   ): Promise<GrowingProcess> {
-    const growingProcess = new GrowingProcess();
-    const cropIdExist = await this.cropRepository.findOne({
-      where: { id: createGrowingProcessDto.cropId, deletedAt: null },
-    });
-    if (!cropIdExist) {
-      throw new BadRequestException('Invalid crop id.');
+    try {
+      const growingProcess = new GrowingProcess();
+      const cropIdExist = await this.cropRepository.findOne({
+        where: { id: createGrowingProcessDto.cropId, deletedAt: null },
+      });
+      if (!cropIdExist) {
+        throw new BadRequestException('Invalid crop id.');
+      }
+      const fieldIdExist = await this.fieldRepository.findOne({
+        where: { id: createGrowingProcessDto.fieldId, deletedAt: null },
+      });
+      if (!fieldIdExist) {
+        throw new BadRequestException('Invalid field id.');
+      }
+      growingProcess.cropId = createGrowingProcessDto.cropId;
+      growingProcess.fieldId = createGrowingProcessDto.fieldId;
+      return await this.growingProcessRepository.save(growingProcess);
+    } catch (error) {
+      if (
+        error instanceof BadRequestException ||
+        error instanceof NotFoundException
+      ) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Error while creating growing process',
+      );
     }
-    const fieldIdExist = await this.fieldRepository.findOne({
-      where: { id: createGrowingProcessDto.fieldId, deletedAt: null },
-    });
-    if (!fieldIdExist) {
-      throw new BadRequestException('Invalid field id.');
-    }
-    growingProcess.cropId = createGrowingProcessDto.cropId;
-    growingProcess.fieldId = createGrowingProcessDto.fieldId;
-    return this.growingProcessRepository.save(growingProcess);
   }
 
   async update(
     id: string,
     updateGrowingProcessDto: Partial<CreateGrowingProcessDto>,
   ): Promise<GrowingProcess> {
-    const growingProcess = await this.growingProcessRepository.findOne({
-      where: { id, deletedAt: null },
-    });
+    try {
+      const growingProcess = await this.growingProcessRepository.findOne({
+        where: { id, deletedAt: null },
+      });
 
-    if (!growingProcess) {
-      throw new Error(`Growing process with id ${id} not found`);
+      if (!growingProcess) {
+        throw new NotFoundException(`Growing process with id ${id} not found`);
+      }
+
+      const cropIdExist = await this.cropRepository.findOne({
+        where: { id: updateGrowingProcessDto.cropId, deletedAt: null },
+      });
+      if (!cropIdExist) {
+        throw new BadRequestException('Invalid crop id.');
+      }
+      const fieldIdExist = await this.fieldRepository.findOne({
+        where: { id: updateGrowingProcessDto.fieldId, deletedAt: null },
+      });
+      if (!fieldIdExist) {
+        throw new BadRequestException('Invalid field id.');
+      }
+
+      Object.assign(growingProcess, updateGrowingProcessDto);
+
+      return await this.growingProcessRepository.save(growingProcess);
+    } catch (error) {
+      if (
+        error instanceof BadRequestException ||
+        error instanceof NotFoundException
+      ) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Error while updating growing process',
+      );
     }
-
-    const cropIdExist = await this.cropRepository.findOne({
-      where: { id: updateGrowingProcessDto.cropId, deletedAt: null },
-    });
-    if (!cropIdExist) {
-      throw new BadRequestException('Invalid crop id.');
-    }
-    const fieldIdExist = await this.fieldRepository.findOne({
-      where: { id: updateGrowingProcessDto.fieldId, deletedAt: null },
-    });
-    if (!fieldIdExist) {
-      throw new BadRequestException('Invalid field id.');
-    }
-
-    Object.assign(growingProcess, updateGrowingProcessDto);
-
-    return await this.growingProcessRepository.save(growingProcess);
   }
 
   async remove(id: string): Promise<void> {
-    await this.growingProcessRepository.update(id, { deletedAt: new Date() });
+    try {
+      await this.growingProcessRepository.update(id, { deletedAt: new Date() });
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Error while removing growing process',
+      );
+    }
   }
 }

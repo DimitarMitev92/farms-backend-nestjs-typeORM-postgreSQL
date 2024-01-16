@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,17 +17,25 @@ export class CropService {
   ) {}
 
   private async checkCropExists(id: string): Promise<Crop> {
-    const crop = await this.cropRepository.findOne({
-      where: { id, deletedAt: null },
-    });
-    if (!crop) {
-      throw new NotFoundException("Crop with this id doesn't exist");
+    try {
+      const crop = await this.cropRepository.findOne({
+        where: { id, deletedAt: null },
+      });
+      if (!crop) {
+        throw new NotFoundException("Crop with this id doesn't exist");
+      }
+      return crop;
+    } catch (error) {
+      throw new InternalServerErrorException('Error while fetching crop data');
     }
-    return crop;
   }
 
   async findAll(): Promise<Crop[]> {
-    return this.cropRepository.find();
+    try {
+      return this.cropRepository.find();
+    } catch (error) {
+      throw new InternalServerErrorException('Error while fetching crops');
+    }
   }
 
   async findOne(id: string): Promise<Crop> {
@@ -34,29 +43,53 @@ export class CropService {
   }
 
   async create(createCropDto: CreateCropDto): Promise<Crop> {
-    const crop = new Crop();
-    const cropName = await this.cropRepository.findOne({
-      where: { crop: createCropDto.crop, deletedAt: null },
-    });
-    if (cropName) {
-      throw new BadRequestException(
-        'Crop with this name is already exist. Change it!',
-      );
+    try {
+      const crop = new Crop();
+      const cropName = await this.cropRepository.findOne({
+        where: { crop: createCropDto.crop, deletedAt: null },
+      });
+      if (cropName) {
+        throw new BadRequestException(
+          'Crop with this name already exists. Change it!',
+        );
+      }
+      crop.crop = createCropDto.crop;
+      return await this.cropRepository.save(crop);
+    } catch (error) {
+      if (
+        error instanceof BadRequestException ||
+        error instanceof NotFoundException
+      ) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Error while creating crop');
     }
-    crop.crop = createCropDto.crop;
-    return await this.cropRepository.save(crop);
   }
 
   async update(id: string, updateCropDto: CreateCropDto): Promise<Crop> {
-    const crop = await this.checkCropExists(id);
-    crop.crop = updateCropDto.crop;
-    return await this.cropRepository.save(crop);
+    try {
+      const crop = await this.checkCropExists(id);
+      crop.crop = updateCropDto.crop;
+      return await this.cropRepository.save(crop);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Error while updating crop');
+    }
   }
 
   async remove(id: string): Promise<void> {
-    const crop = await this.checkCropExists(id);
-    await this.cropRepository.update(crop.id, {
-      deletedAt: new Date(),
-    });
+    try {
+      const crop = await this.checkCropExists(id);
+      await this.cropRepository.update(crop.id, {
+        deletedAt: new Date(),
+      });
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Error while removing crop');
+    }
   }
 }

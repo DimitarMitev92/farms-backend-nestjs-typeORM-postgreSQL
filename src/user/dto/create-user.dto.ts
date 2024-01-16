@@ -16,5 +16,5 @@ export class CreateUserDto {
   readonly password: string;
 
   @IsEnum(UserRights, { message: 'Invalid user rights' })
-  readonly rights: string;
+  readonly rights: UserRights;
 }

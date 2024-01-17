@@ -79,12 +79,13 @@ export class CropService {
     }
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<{ message: string }> {
     try {
       const crop = await this.checkCropExists(id);
       await this.cropRepository.update(crop.id, {
         deletedAt: new Date(),
       });
+      return { message: 'Crop deleted successfully.' };
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;

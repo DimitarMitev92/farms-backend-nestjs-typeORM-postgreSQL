@@ -130,9 +130,13 @@ export class MachineryService {
     }
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<{ message: string }> {
     try {
-      await this.machineryRepository.update(id, { deletedAt: new Date() });
+      const machinery = await this.checkMachineryExists(id);
+      await this.machineryRepository.update(machinery.id, {
+        deletedAt: new Date(),
+      });
+      return { message: 'Machinery deleted successfully' };
     } catch (error) {
       throw new InternalServerErrorException('Error while removing machinery');
     }

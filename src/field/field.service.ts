@@ -139,9 +139,12 @@ export class FieldService {
     }
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<{ message: string }> {
     try {
-      await this.fieldRepository.update(id, { deletedAt: new Date() });
+      const field = await this.checkFieldExists(id);
+      await this.fieldRepository.update(field.id, { deletedAt: new Date() });
+
+      return { message: 'Field deleted successfully' };
     } catch (error) {
       throw new InternalServerErrorException('Error while removing field');
     }

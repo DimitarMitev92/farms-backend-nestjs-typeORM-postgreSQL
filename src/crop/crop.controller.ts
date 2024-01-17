@@ -53,7 +53,7 @@ export class CropController {
   @UseGuards(AuthGuard)
   @UserRightsDec(UserRights.OWNER)
   @Delete(':id')
-  async remove(@Param('id') id: string): Promise<void> {
+  async remove(@Param('id') id: string): Promise<{ message: string }> {
     return this.cropService.remove(id);
   }
 }

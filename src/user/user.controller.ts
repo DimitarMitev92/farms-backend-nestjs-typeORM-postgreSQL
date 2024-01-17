@@ -44,7 +44,7 @@ export class UserController {
   @UseGuards(AuthGuard)
   @UserRightsDec(UserRights.OWNER)
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<void> {
+  remove(@Param('id') id: string): Promise<{ message: string }> {
     return this.userService.remove(id);
   }
 }

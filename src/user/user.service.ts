@@ -71,7 +71,7 @@ export class UserService {
     }
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<{ message: string }> {
     try {
       const user = await this.findOne(id);
 
@@ -82,6 +82,7 @@ export class UserService {
       user.deletedAt = new Date();
 
       await this.userRepository.save(user);
+      return { message: 'User deleted successfully' };
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;

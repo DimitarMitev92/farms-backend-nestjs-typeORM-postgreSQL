@@ -129,9 +129,13 @@ export class GrowingProcessService {
     }
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<{ message: string }> {
     try {
-      await this.growingProcessRepository.update(id, { deletedAt: new Date() });
+      const growingProcess = await this.checkGrowingProcessExists(id);
+      await this.growingProcessRepository.update(growingProcess.id, {
+        deletedAt: new Date(),
+      });
+      return { message: 'Growing process deleted successfully' };
     } catch (error) {
       throw new InternalServerErrorException(
         'Error while removing growing process',

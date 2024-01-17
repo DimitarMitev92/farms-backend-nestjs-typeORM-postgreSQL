@@ -162,11 +162,13 @@ export class FieldCultivationService {
     }
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<{ message: string }> {
     try {
-      await this.fieldCultivationRepository.update(id, {
+      const fieldCultivation = await this.checkFieldCultivationExists(id);
+      await this.fieldCultivationRepository.update(fieldCultivation.id, {
         deletedAt: new Date(),
       });
+      return { message: 'Field cultivation deleted successfully' };
     } catch (error) {
       throw new InternalServerErrorException(
         'Error while removing field cultivation',

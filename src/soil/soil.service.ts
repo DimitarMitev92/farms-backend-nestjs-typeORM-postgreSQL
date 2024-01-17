@@ -82,12 +82,13 @@ export class SoilService {
     }
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<{ message: string }> {
     try {
       const soil = await this.checkSoilExists(id);
       await this.soilRepository.update(soil.id, {
         deletedAt: new Date(),
       });
+      return { message: 'Soil deleted successfully' };
     } catch (error) {
       throw new InternalServerErrorException('Error while removing soil');
     }

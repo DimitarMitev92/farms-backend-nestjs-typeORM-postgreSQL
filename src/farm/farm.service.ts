@@ -99,10 +99,11 @@ export class FarmService {
     }
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<{ message: string }> {
     try {
       const farm = await this.checkFarmExists(id);
       await this.farmRepository.update(farm.id, { deletedAt: new Date() });
+      return { message: 'Farm deleted successfully' };
     } catch (error) {
       throw new InternalServerErrorException('Error while removing farm');
     }

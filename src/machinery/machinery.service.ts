@@ -10,6 +10,7 @@ import { Machinery } from './machinery.entity';
 import { CreateMachineryDto } from './dto/create-machinery.dto';
 import { Farm } from 'src/farm/farm.entity';
 import { MostMachineriesDto } from './dto/most-machineries.dto';
+import { FieldCultivation } from 'src/field-cultivation/field-cultivation.entity';
 
 @Injectable()
 export class MachineryService {
@@ -18,6 +19,8 @@ export class MachineryService {
     private readonly machineryRepository: Repository<Machinery>,
     @InjectRepository(Farm)
     private readonly farmRepository: Repository<Farm>,
+    @InjectRepository(FieldCultivation)
+    private readonly fieldCultivationRepository: Repository<FieldCultivation>,
   ) {}
 
   private async checkMachineryExists(id: string): Promise<Machinery> {
@@ -143,32 +146,39 @@ export class MachineryService {
     }
   }
 
-  async transfer(
-    id: string,
-    updateMachineryDto: Partial<CreateMachineryDto>,
-    farmId: string,
-  ): Promise<Machinery> {
+  async transfer(machineryId: string, farmId: string): Promise<Machinery> {
     try {
       const machinery = await this.machineryRepository.findOne({
-        where: { id, deletedAt: null },
+        where: { id: machineryId, deletedAt: null },
       });
       if (!machinery) {
-        throw new NotFoundException(`Machinery with id ${id} not found`);
+        throw new NotFoundException(
+          `Machinery with id ${machineryId} not found`,
+        );
       }
-
+      console.log(machinery);
       const farmIdExist = await this.farmRepository.findOne({
         where: { id: farmId, deletedAt: null },
       });
+      console.log(farmIdExist);
       if (!farmIdExist) {
         throw new BadRequestException('Invalid farm id.');
       }
+      console.log(machineryId);
+      // const fieldCultivationMachineryUse =
+      //   await this.fieldCultivationRepository.findOne({
+      //     where: { machineryId: machineryId, deletedAt: null },
+      //   });
+      // console.log(fieldCultivationMachineryUse);
+      // if (fieldCultivationMachineryUse) {
+      //   throw new BadRequestException('Machinery is in use.');
+      // }
 
       machinery.farmId = farmId;
 
-      Object.assign(machinery, updateMachineryDto);
-
       return await this.machineryRepository.save(machinery);
     } catch (error) {
+      console.log(error);
       if (
         error instanceof BadRequestException ||
         error instanceof NotFoundException

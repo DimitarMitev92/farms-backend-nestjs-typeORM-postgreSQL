@@ -109,3 +109,11 @@ export class FarmService {
     }
   }
 }
+
+// {
+//   "name": "test2",
+//   "location": {
+//       "type": "Point",
+//       "location": [123.123,123.123]
+//   }
+// }

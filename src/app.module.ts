@@ -19,6 +19,7 @@ import { FieldModule } from './field/field.module';
 import { CultivationModule } from './cultivation/cultivation.module';
 import { GrowingProcessModule } from './growing-process/growing-process.module';
 import { AuthModule } from './auth/auth.module';
+import { ReportingModule } from './reporting/reporting.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { AuthModule } from './auth/auth.module';
     CultivationModule,
     GrowingProcessModule,
     AuthModule,
+    ReportingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

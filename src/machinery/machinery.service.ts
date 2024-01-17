@@ -109,9 +109,8 @@ export class MachineryService {
           'Machinery with this identification number is already in the database.',
         );
       }
-
-      const farmIdExist = await this.machineryRepository.findOne({
-        where: { farmId: updateMachineryDto.farmId, deletedAt: null },
+      const farmIdExist = await this.farmRepository.findOne({
+        where: { id: updateMachineryDto.farmId, deletedAt: null },
       });
       if (!farmIdExist) {
         throw new BadRequestException('Invalid farm id.');
@@ -126,7 +125,9 @@ export class MachineryService {
       ) {
         throw error;
       }
-      throw new InternalServerErrorException('Error while updating machinery');
+      throw new InternalServerErrorException(
+        `Error while updating machinery : ${error}`,
+      );
     }
   }
 

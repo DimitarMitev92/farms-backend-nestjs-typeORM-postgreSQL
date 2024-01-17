@@ -53,14 +53,14 @@ export class FarmService {
           'Farm with this name already exists. Change it!',
         );
       }
-      // const farmWithSameLocation = await this.farmRepository.findOne({
-      //   where: { location: createFarmDto.location, deletedAt: null },
-      // });
-      // if (farmWithSameLocation) {
-      //   throw new BadRequestException(
-      //     'Farm with this location already exists. Change it!',
-      //   );
-      // }
+      const farmWithSameLocation = await this.farmRepository.findOne({
+        where: { location: createFarmDto.location, deletedAt: null },
+      });
+      if (farmWithSameLocation) {
+        throw new BadRequestException(
+          'Farm with this location already exists. Change it!',
+        );
+      }
       farm.name = createFarmDto.name;
       farm.location = createFarmDto.location;
       return await this.farmRepository.save(farm);

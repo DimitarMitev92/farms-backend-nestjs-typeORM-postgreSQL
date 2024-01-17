@@ -17,9 +17,9 @@ export class Farm {
   @IsNotEmpty({ message: 'Name cannot be empty' })
   name: string;
 
-  @Column({ type: 'simple-array' })
+  @Column({ type: 'jsonb' })
   @IsNotEmpty({ message: 'Location cannot be empty' })
-  location: number[];
+  location: { type: string; location: number[] };
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

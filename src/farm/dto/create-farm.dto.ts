@@ -1,10 +1,4 @@
-import {
-  IsNotEmpty,
-  IsArray,
-  ArrayMinSize,
-  IsString,
-  ArrayNotEmpty,
-} from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateFarmDto {
   @IsNotEmpty()
@@ -12,8 +6,5 @@ export class CreateFarmDto {
   readonly name: string;
 
   @IsNotEmpty()
-  @IsArray()
-  @ArrayNotEmpty({ message: 'Location cannot be empty' })
-  @ArrayMinSize(2, { message: 'Location should have at least 2 coordinates' })
-  readonly location: number[];
+  readonly location: { type: string; location: number[] };
 }

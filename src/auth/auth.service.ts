@@ -9,7 +9,7 @@ import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { User, UserRights } from 'src/user/user.entity';
-import { DeepPartial, QueryFailedError } from 'typeorm';
+import { DeepPartial } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -40,6 +40,14 @@ export class AuthService {
     { access_token: string } | { statusCode: number; message: string }
   > {
     try {
+      const existingUser = await this.userService.findOneByEmail(
+        createUserDto.email,
+      );
+      console.log(existingUser);
+      if (existingUser) {
+        throw new ConflictException('Email already exists');
+      }
+
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(
         createUserDto.password,
@@ -60,10 +68,7 @@ export class AuthService {
 
       return { access_token: await this.jwtService.signAsync(payload) };
     } catch (error) {
-      if (
-        error instanceof QueryFailedError &&
-        error.message.includes('duplicate key')
-      ) {
+      if (error instanceof ConflictException) {
         throw new ConflictException('Email already exists');
       }
       throw new InternalServerErrorException('Internal Server Error');

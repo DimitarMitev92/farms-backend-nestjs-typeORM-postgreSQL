@@ -1,4 +1,4 @@
-import { Get, Param, Patch } from '@nestjs/common';
+import { Get, Param } from '@nestjs/common';
 import { Controller, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UserRightsDec } from 'src/auth/user-rights.decorator';
@@ -21,7 +21,7 @@ export class ReportingController {
 
   @UseGuards(AuthGuard)
   @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR, UserRights.VIEWER)
-  @Patch('transfer/:machineryId/:farmId')
+  @Get('transfer/:machineryId/:farmId')
   transferMachinery(
     @Param('machineryId') machineryId: string,
     @Param('farmId') farmId: string,

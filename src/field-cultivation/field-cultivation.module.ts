@@ -18,5 +18,6 @@ import { GrowingProcess } from 'src/growing-process/growing-process.entity';
   ],
   controllers: [FieldCultivationController],
   providers: [FieldCultivationService],
+  exports: [FieldCultivationService],
 })
 export class FieldCultivationModule {}

@@ -156,23 +156,30 @@ export class MachineryService {
           `Machinery with id ${machineryId} not found`,
         );
       }
-      console.log(machinery);
       const farmIdExist = await this.farmRepository.findOne({
         where: { id: farmId, deletedAt: null },
       });
-      console.log(farmIdExist);
       if (!farmIdExist) {
         throw new BadRequestException('Invalid farm id.');
       }
-      console.log(machineryId);
-      // const fieldCultivationMachineryUse =
-      //   await this.fieldCultivationRepository.findOne({
-      //     where: { machineryId: machineryId, deletedAt: null },
-      //   });
-      // console.log(fieldCultivationMachineryUse);
-      // if (fieldCultivationMachineryUse) {
-      //   throw new BadRequestException('Machinery is in use.');
-      // }
+      console.log('hit before');
+
+      const fieldCultivationMachineryUse = await this.fieldCultivationRepository
+        .createQueryBuilder('field_cultivation')
+        .select(['field_cultivation.machinery_id'])
+        .innerJoin(
+          Machinery,
+          'machinery',
+          'machinery.id = field_cultivation.machinery_id',
+        )
+        .where('machinery.id = :machineryId', { machineryId: machineryId })
+        .andWhere('field_cultivation.deletedAt IS NULL')
+        .getRawMany();
+
+      console.log(fieldCultivationMachineryUse);
+      if (fieldCultivationMachineryUse.length > 0) {
+        throw new BadRequestException('Machinery is in use.');
+      }
 
       machinery.farmId = farmId;
 

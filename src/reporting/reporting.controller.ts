@@ -38,14 +38,14 @@ export class ReportingController {
 
   @UseGuards(AuthGuard)
   @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR, UserRights.VIEWER)
-  @Get('field/mostCommonSoil')
+  @Get('field/most-common-soil')
   getMostCommonSoil(): Promise<FieldSoilDto[]> {
     return this.fieldService.getMostCommonSoil();
   }
 
   @UseGuards(AuthGuard)
   @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR, UserRights.VIEWER)
-  @Get('farm/mostMachineries')
+  @Get('farm/most-machineries')
   getMostMachineries(): Promise<MostMachineriesDto[]> {
     return this.machineryService.mostMachineries();
   }

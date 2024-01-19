@@ -150,6 +150,21 @@ export class FieldService {
     }
   }
 
+  async permDelete(id: string): Promise<{ message: string }> {
+    try {
+      const field = await this.checkFieldExists(id);
+      await this.fieldRepository.delete(field.id);
+      return { message: 'Field permanently deleted successfully.' };
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Error while permanently removing field',
+      );
+    }
+  }
+
   async getFieldCountByFarmAndCrop(): Promise<FieldCountDto[]> {
     try {
       return this.fieldRepository

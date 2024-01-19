@@ -108,6 +108,21 @@ export class FarmService {
       throw new InternalServerErrorException('Error while removing farm');
     }
   }
+
+  async permDelete(id: string): Promise<{ message: string }> {
+    try {
+      const farm = await this.checkFarmExists(id);
+      await this.farmRepository.delete(farm.id);
+      return { message: 'Farm permanently deleted successfully.' };
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Error while permanently removing farm',
+      );
+    }
+  }
 }
 
 // {

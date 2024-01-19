@@ -93,4 +93,19 @@ export class SoilService {
       throw new InternalServerErrorException('Error while removing soil');
     }
   }
+
+  async permDelete(id: string): Promise<{ message: string }> {
+    try {
+      const soil = await this.checkSoilExists(id);
+      await this.soilRepository.delete(soil.id);
+      return { message: 'Soil permanently deleted successfully.' };
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Error while permanently removing soil',
+      );
+    }
+  }
 }

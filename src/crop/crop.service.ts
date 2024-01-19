@@ -93,4 +93,19 @@ export class CropService {
       throw new InternalServerErrorException('Error while removing crop');
     }
   }
+
+  async permDelete(id: string): Promise<{ message: string }> {
+    try {
+      const crop = await this.checkCropExists(id);
+      await this.cropRepository.delete(crop.id);
+      return { message: 'Crop permanently deleted successfully.' };
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Error while permanently removing crop',
+      );
+    }
+  }
 }

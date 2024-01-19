@@ -146,6 +146,21 @@ export class MachineryService {
     }
   }
 
+  async permDelete(id: string): Promise<{ message: string }> {
+    try {
+      const machinery = await this.checkMachineryExists(id);
+      await this.machineryRepository.delete(machinery.id);
+      return { message: 'Machinery permanently deleted successfully.' };
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Error while permanently removing machinery',
+      );
+    }
+  }
+
   async transfer(machineryId: string, farmId: string): Promise<Machinery> {
     try {
       const machinery = await this.machineryRepository.findOne({

@@ -106,4 +106,19 @@ export class CultivationService {
       throw new InternalServerErrorException('Error while removing field');
     }
   }
+
+  async permDelete(id: string): Promise<{ message: string }> {
+    try {
+      const cultivation = await this.checkCultivationExists(id);
+      await this.cultivationRepository.delete(cultivation.id);
+      return { message: 'Cultivation permanently deleted successfully.' };
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Error while permanently removing cultivation',
+      );
+    }
+  }
 }

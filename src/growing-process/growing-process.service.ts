@@ -142,4 +142,19 @@ export class GrowingProcessService {
       );
     }
   }
+
+  async permDelete(id: string): Promise<{ message: string }> {
+    try {
+      const growingProcess = await this.checkGrowingProcessExists(id);
+      await this.growingProcessRepository.delete(growingProcess.id);
+      return { message: 'Growing process permanently deleted successfully.' };
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Error while permanently removing growing process',
+      );
+    }
+  }
 }

@@ -175,4 +175,19 @@ export class FieldCultivationService {
       );
     }
   }
+
+  async permDelete(id: string): Promise<{ message: string }> {
+    try {
+      const fieldCultivation = await this.checkFieldCultivationExists(id);
+      await this.fieldCultivationRepository.delete(fieldCultivation.id);
+      return { message: 'Field cultivation permanently deleted successfully.' };
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Error while permanently removing field cultivation.',
+      );
+    }
+  }
 }

@@ -60,9 +60,16 @@ export class FarmController {
   }
 
   @UseGuards(AuthGuard)
-  @UserRightsDec(UserRights.OWNER)
+  @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR)
   @Delete(':id')
   remove(@Param('id') id: string): Promise<{ message: string }> {
     return this.farmService.remove(id);
+  }
+
+  @UseGuards(AuthGuard)
+  @UserRightsDec(UserRights.OWNER)
+  @Delete('perm-delete/:id')
+  async permRemove(@Param('id') id: string): Promise<{ message: string }> {
+    return this.farmService.permDelete(id);
   }
 }

@@ -214,12 +214,9 @@ export class MachineryService {
     try {
       return this.machineryRepository
         .createQueryBuilder('machinery')
-        .select([
-          'COUNT(machinery.id) AS countMachinery',
-          'farm.name AS farmName',
-        ])
+        .select(['COUNT(machinery.id) AS countMachinery', 'farm.id AS farmId'])
         .innerJoin(Farm, 'farm', 'farm.id = machinery.farm_id')
-        .groupBy('farm.name')
+        .groupBy('farm.id')
         .orderBy('countMachinery', 'DESC')
         .getRawMany();
     } catch (error) {

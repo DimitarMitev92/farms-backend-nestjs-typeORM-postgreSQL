@@ -171,8 +171,8 @@ export class FieldService {
         .createQueryBuilder('field')
         .select([
           'COUNT(field.id) AS count',
-          'farm.name AS farmName',
-          'crop.crop AS cropName',
+          'farm.id AS farmId',
+          'crop.id AS cropId',
         ])
         .innerJoin(Farm, 'farm', 'field.farm_id = farm.id')
         .innerJoin(
@@ -181,7 +181,7 @@ export class FieldService {
           'field.id = growing_process.field_id',
         )
         .innerJoin(Crop, 'crop', 'crop.id = growing_process.crop_id')
-        .groupBy('farm.name, crop.crop')
+        .groupBy('farm.id, crop.id')
         .getRawMany();
     } catch (error) {
       throw new InternalServerErrorException(
@@ -194,10 +194,10 @@ export class FieldService {
     try {
       return this.fieldRepository
         .createQueryBuilder('field')
-        .select(['COUNT(field.id) AS count', 'soil.soil AS soilType'])
+        .select(['COUNT(field.id) AS count', 'soil.id AS soilId'])
         .innerJoin(Soil, 'soil', 'field.soil_id = soil.id')
         .innerJoin(Farm, 'farm', 'farm.id = field.farm_id')
-        .groupBy('soil.soil')
+        .groupBy('soil.id')
         .limit(1)
         .getRawMany();
     } catch (error) {

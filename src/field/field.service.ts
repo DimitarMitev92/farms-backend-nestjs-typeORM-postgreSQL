@@ -155,7 +155,7 @@ export class FieldService {
       return this.fieldRepository
         .createQueryBuilder('field')
         .select([
-          'COUNT(field.id) AS fieldId',
+          'COUNT(field.id) AS count',
           'farm.name AS farmName',
           'crop.crop AS cropName',
         ])

@@ -162,7 +162,6 @@ export class MachineryService {
       if (!farmIdExist) {
         throw new BadRequestException('Invalid farm id.');
       }
-      console.log('hit before');
 
       const fieldCultivationMachineryUse = await this.fieldCultivationRepository
         .createQueryBuilder('field_cultivation')
@@ -176,7 +175,6 @@ export class MachineryService {
         .andWhere('field_cultivation.deletedAt IS NULL')
         .getRawMany();
 
-      console.log(fieldCultivationMachineryUse);
       if (fieldCultivationMachineryUse.length > 0) {
         throw new BadRequestException('Machinery is in use.');
       }
@@ -185,7 +183,6 @@ export class MachineryService {
 
       return await this.machineryRepository.save(machinery);
     } catch (error) {
-      console.log(error);
       if (
         error instanceof BadRequestException ||
         error instanceof NotFoundException

@@ -20,7 +20,7 @@ export class ReportingController {
   ) {}
 
   @UseGuards(AuthGuard)
-  @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR, UserRights.VIEWER)
+  @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR)
   @Get('transfer/:machineryId/:farmId')
   transferMachinery(
     @Param('machineryId') machineryId: string,

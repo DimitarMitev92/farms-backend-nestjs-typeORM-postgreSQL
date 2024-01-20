@@ -10,6 +10,8 @@ import {
 import { FieldCultivationService } from './field-cultivation.service';
 import { FieldCultivation } from './field-cultivation.entity';
 import { CreateFieldCultivationDto } from './dto/create-field-cultivation.dto';
+import { UserRights } from 'src/user/user.entity';
+import { Roles } from 'src/auth/roles.decorator';
 
 @Controller('field-cultivation')
 export class FieldCultivationController {
@@ -18,16 +20,19 @@ export class FieldCultivationController {
   ) {}
 
   @Get()
+  @Roles([UserRights.OWNER, UserRights.OPERATOR, UserRights.VIEWER])
   findAll(): Promise<FieldCultivation[]> {
     return this.fieldCultivationService.findAll();
   }
 
   @Get(':id')
+  @Roles([UserRights.OWNER, UserRights.OPERATOR, UserRights.VIEWER])
   findOne(@Param('id') id: string): Promise<FieldCultivation> {
     return this.fieldCultivationService.findOne(id);
   }
 
   @Post()
+  @Roles([UserRights.OWNER, UserRights.OPERATOR, UserRights.VIEWER])
   create(
     @Body() createFieldCultivationDto: Partial<CreateFieldCultivationDto>,
   ): Promise<FieldCultivation> {
@@ -46,6 +51,7 @@ export class FieldCultivationController {
   }
 
   @Patch(':id')
+  @Roles([UserRights.OWNER, UserRights.OPERATOR])
   update(
     @Param('id') id: string,
     @Body() updateFieldCultivationDto: Partial<FieldCultivation>,
@@ -54,11 +60,13 @@ export class FieldCultivationController {
   }
 
   @Delete(':id')
+  @Roles([UserRights.OWNER, UserRights.OPERATOR])
   remove(@Param('id') id: string): Promise<{ message: string }> {
     return this.fieldCultivationService.remove(id);
   }
 
   @Delete('perm-delete/:id')
+  @Roles([UserRights.OWNER])
   async permRemove(@Param('id') id: string): Promise<{ message: string }> {
     return this.fieldCultivationService.permDelete(id);
   }

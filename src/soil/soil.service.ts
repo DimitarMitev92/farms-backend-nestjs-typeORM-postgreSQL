@@ -49,6 +49,7 @@ export class SoilService {
       const soilName = await this.soilRepository.findOne({
         where: { soil: createSoilDto.soil, deletedAt: null },
       });
+      console.log(soilName);
       if (soilName) {
         throw new BadRequestException(
           'Soil with this name already exists. Change it!',

@@ -20,6 +20,8 @@ import { CultivationModule } from './cultivation/cultivation.module';
 import { GrowingProcessModule } from './growing-process/growing-process.module';
 import { ReportingModule } from './reporting/reporting.module';
 import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './auth/roles.guard';
 
 @Module({
   imports: [
@@ -41,6 +43,6 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [{ provide: APP_GUARD, useClass: RolesGuard }, AppService],
 })
 export class AppModule {}

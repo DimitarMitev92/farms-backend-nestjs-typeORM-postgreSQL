@@ -3,11 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-
-//ZOD Schema
 import { envSchema } from './zod/env-schema';
-
-//User
 import { UserModule } from './user/user.module';
 import { dbdatasource } from '../db/data.source';
 import { SoilModule } from './soil/soil.module';
@@ -20,8 +16,9 @@ import { CultivationModule } from './cultivation/cultivation.module';
 import { GrowingProcessModule } from './growing-process/growing-process.module';
 import { ReportingModule } from './reporting/reporting.module';
 import { AuthModule } from './auth/auth.module';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_FILTER } from '@nestjs/core'; // Add APP_FILTER
 import { RolesGuard } from './auth/roles.guard';
+import { GlobalExceptionFilter } from './global-exception.filter';
 
 @Module({
   imports: [
@@ -43,6 +40,10 @@ import { RolesGuard } from './auth/roles.guard';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [{ provide: APP_GUARD, useClass: RolesGuard }, AppService],
+  providers: [
+    { provide: APP_GUARD, useClass: RolesGuard },
+    { provide: APP_FILTER, useClass: GlobalExceptionFilter },
+    AppService,
+  ],
 })
 export class AppModule {}

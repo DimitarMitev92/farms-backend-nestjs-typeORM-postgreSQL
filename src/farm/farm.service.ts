@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-  InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -17,25 +16,17 @@ export class FarmService {
   ) {}
 
   private async checkFarmExists(id: string): Promise<Farm> {
-    try {
-      const farm = await this.farmRepository.findOne({
-        where: { id, deletedAt: null },
-      });
-      if (!farm) {
-        throw new NotFoundException("Farm with this id doesn't exist");
-      }
-      return farm;
-    } catch (error) {
-      throw new InternalServerErrorException('Error while fetching farm data');
+    const farm = await this.farmRepository.findOne({
+      where: { id, deletedAt: null },
+    });
+    if (!farm) {
+      throw new NotFoundException("Farm with this id doesn't exist");
     }
+    return farm;
   }
 
   async findAll(): Promise<Farm[]> {
-    try {
-      return this.farmRepository.find();
-    } catch (error) {
-      throw new InternalServerErrorException('Error while fetching farms');
-    }
+    return this.farmRepository.find();
   }
 
   async findOne(id: string): Promise<Farm> {
@@ -43,85 +34,55 @@ export class FarmService {
   }
 
   async create(createFarmDto: CreateFarmDto): Promise<Farm> {
-    try {
-      const farm = new Farm();
-      const farmName = await this.farmRepository.findOne({
-        where: { name: createFarmDto.name, deletedAt: null },
-      });
-      if (farmName) {
-        throw new BadRequestException(
-          'Farm with this name already exists. Change it!',
-        );
-      }
-      const farmWithSameLocation = await this.farmRepository.findOne({
-        where: { location: createFarmDto.location, deletedAt: null },
-      });
-      if (farmWithSameLocation) {
-        throw new BadRequestException(
-          'Farm with this location already exists. Change it!',
-        );
-      }
-      farm.name = createFarmDto.name;
-      farm.location = createFarmDto.location;
-      return await this.farmRepository.save(farm);
-    } catch (error) {
-      if (
-        error instanceof BadRequestException ||
-        error instanceof NotFoundException
-      ) {
-        throw error;
-      }
-      throw new InternalServerErrorException('Error while creating farm');
+    const farm = new Farm();
+    const farmName = await this.farmRepository.findOne({
+      where: { name: createFarmDto.name, deletedAt: null },
+    });
+    if (farmName) {
+      throw new BadRequestException(
+        'Farm with this name already exists. Change it!',
+      );
     }
+    const farmWithSameLocation = await this.farmRepository.findOne({
+      where: { location: createFarmDto.location, deletedAt: null },
+    });
+    if (farmWithSameLocation) {
+      throw new BadRequestException(
+        'Farm with this location already exists. Change it!',
+      );
+    }
+    farm.name = createFarmDto.name;
+    farm.location = createFarmDto.location;
+    return await this.farmRepository.save(farm);
   }
 
   async update(
     id: string,
     updateFarmDto: Partial<CreateFarmDto>,
   ): Promise<Farm> {
-    try {
-      const farm = await this.farmRepository.findOne({
-        where: { id, deletedAt: null },
-      });
+    const farm = await this.farmRepository.findOne({
+      where: { id, deletedAt: null },
+    });
 
-      if (!farm) {
-        throw new NotFoundException(`Farm with id ${id} not found`);
-      }
-
-      Object.assign(farm, updateFarmDto);
-
-      return await this.farmRepository.save(farm);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      throw new InternalServerErrorException('Error while updating farm');
+    if (!farm) {
+      throw new NotFoundException(`Farm with id ${id} not found`);
     }
+
+    Object.assign(farm, updateFarmDto);
+
+    return await this.farmRepository.save(farm);
   }
 
   async remove(id: string): Promise<{ message: string }> {
-    try {
-      const farm = await this.checkFarmExists(id);
-      await this.farmRepository.update(farm.id, { deletedAt: new Date() });
-      return { message: 'Farm deleted successfully' };
-    } catch (error) {
-      throw new InternalServerErrorException('Error while removing farm');
-    }
+    const farm = await this.checkFarmExists(id);
+    await this.farmRepository.update(farm.id, { deletedAt: new Date() });
+    return { message: 'Farm deleted successfully' };
   }
 
   async permDelete(id: string): Promise<{ message: string }> {
-    try {
-      const farm = await this.checkFarmExists(id);
-      await this.farmRepository.delete(farm.id);
-      return { message: 'Farm permanently deleted successfully.' };
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      throw new InternalServerErrorException(
-        'Error while permanently removing farm',
-      );
-    }
+    const farm = await this.checkFarmExists(id);
+    await this.farmRepository.delete(farm.id);
+    return { message: 'Farm permanently deleted successfully.' };
   }
 }
 

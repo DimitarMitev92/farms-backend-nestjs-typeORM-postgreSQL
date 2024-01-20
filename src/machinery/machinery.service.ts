@@ -214,7 +214,10 @@ export class MachineryService {
     try {
       return this.machineryRepository
         .createQueryBuilder('machinery')
-        .select(['COUNT(machinery.id) AS countMachinery', 'farm.id AS farmId'])
+        .select([
+          'CAST(COUNT(machinery.id) AS int) AS countMachinery',
+          'farm.id AS farmId',
+        ])
         .innerJoin(Farm, 'farm', 'farm.id = machinery.farm_id')
         .groupBy('farm.id')
         .orderBy('countMachinery', 'DESC')

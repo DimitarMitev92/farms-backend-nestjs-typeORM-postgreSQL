@@ -170,7 +170,7 @@ export class FieldService {
       return this.fieldRepository
         .createQueryBuilder('field')
         .select([
-          'COUNT(field.id) AS count',
+          'CAST(COUNT(field.id) AS int) AS count',
           'farm.id AS farmId',
           'crop.id AS cropId',
         ])
@@ -194,7 +194,7 @@ export class FieldService {
     try {
       return this.fieldRepository
         .createQueryBuilder('field')
-        .select(['COUNT(field.id) AS count', 'soil.id AS soilId'])
+        .select(['CAST(COUNT(field.id) AS int) AS count', 'soil.id AS soilId'])
         .innerJoin(Soil, 'soil', 'field.soil_id = soil.id')
         .innerJoin(Farm, 'farm', 'farm.id = field.farm_id')
         .groupBy('soil.id')

@@ -84,7 +84,7 @@ export class FieldService {
     id: string,
     updateFieldDto: Partial<CreateFieldDto>,
   ): Promise<Field> {
-    const field = await this.fieldRepository.findOne({
+    let field = await this.fieldRepository.findOne({
       where: { id, deletedAt: null },
     });
 
@@ -105,7 +105,7 @@ export class FieldService {
       throw new BadRequestException('Invalid farm id.');
     }
 
-    Object.assign(field, updateFieldDto);
+    field = { ...field, ...updateFieldDto };
 
     return await this.fieldRepository.save(field);
   }

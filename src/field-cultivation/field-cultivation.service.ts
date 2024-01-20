@@ -83,7 +83,7 @@ export class FieldCultivationService {
     id: string,
     updateFieldCultivationDto: Partial<CreateFieldCultivationDto>,
   ): Promise<FieldCultivation> {
-    const fieldCultivation = await this.fieldCultivationRepository.findOne({
+    let fieldCultivation = await this.fieldCultivationRepository.findOne({
       where: { id, deletedAt: null },
     });
     if (!fieldCultivation) {
@@ -114,7 +114,7 @@ export class FieldCultivationService {
       throw new BadRequestException('Invalid growing process id.');
     }
 
-    Object.assign(fieldCultivation, updateFieldCultivationDto);
+    fieldCultivation = { ...fieldCultivation, ...updateFieldCultivationDto };
 
     return await this.fieldCultivationRepository.save(fieldCultivation);
   }

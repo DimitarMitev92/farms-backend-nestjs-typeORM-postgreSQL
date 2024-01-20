@@ -64,7 +64,7 @@ export class GrowingProcessService {
     id: string,
     updateGrowingProcessDto: Partial<CreateGrowingProcessDto>,
   ): Promise<GrowingProcess> {
-    const growingProcess = await this.growingProcessRepository.findOne({
+    let growingProcess = await this.growingProcessRepository.findOne({
       where: { id, deletedAt: null },
     });
 
@@ -85,7 +85,7 @@ export class GrowingProcessService {
       throw new BadRequestException('Invalid field id.');
     }
 
-    Object.assign(growingProcess, updateGrowingProcessDto);
+    growingProcess = { ...growingProcess, ...updateGrowingProcessDto };
 
     return await this.growingProcessRepository.save(growingProcess);
   }

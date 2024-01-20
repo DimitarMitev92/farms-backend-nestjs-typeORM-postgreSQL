@@ -70,7 +70,7 @@ export class MachineryService {
     id: string,
     updateMachineryDto: Partial<CreateMachineryDto>,
   ): Promise<Machinery> {
-    const machinery = await this.machineryRepository.findOne({
+    let machinery = await this.machineryRepository.findOne({
       where: { id, deletedAt: null },
     });
     if (!machinery) {
@@ -95,7 +95,8 @@ export class MachineryService {
       throw new BadRequestException('Invalid farm id.');
     }
 
-    Object.assign(machinery, updateMachineryDto);
+    machinery = { ...machinery, ...updateMachineryDto };
+
     return await this.machineryRepository.save(machinery);
   }
 

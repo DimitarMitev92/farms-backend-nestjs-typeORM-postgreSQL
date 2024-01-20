@@ -20,16 +20,6 @@ export class ReportingController {
   ) {}
 
   @UseGuards(AuthGuard)
-  @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR)
-  @Post('transfer/:machineryId/:farmId')
-  transferMachinery(
-    @Param('machineryId') machineryId: string,
-    @Param('farmId') farmId: string,
-  ): Promise<Partial<Machinery>> {
-    return this.machineryService.transfer(machineryId, farmId);
-  }
-
-  @UseGuards(AuthGuard)
   @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR, UserRights.VIEWER)
   @Get('field/count')
   getFieldCountByFarmAndCrop(): Promise<FieldCountDto[]> {

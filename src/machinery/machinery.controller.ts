@@ -74,4 +74,14 @@ export class MachineryController {
   async permRemove(@Param('id') id: string): Promise<{ message: string }> {
     return this.machineryService.permDelete(id);
   }
+
+  @UseGuards(AuthGuard)
+  @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR)
+  @Post('transfer/:machineryId/:farmId')
+  transferMachinery(
+    @Param('machineryId') machineryId: string,
+    @Param('farmId') farmId: string,
+  ): Promise<Partial<Machinery>> {
+    return this.machineryService.transfer(machineryId, farmId);
+  }
 }

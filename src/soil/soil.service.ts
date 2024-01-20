@@ -26,6 +26,7 @@ export class SoilService {
       }
       return soil;
     } catch (error) {
+      //REFACTOR
       throw new InternalServerErrorException('Error while fetching soil data');
     }
   }

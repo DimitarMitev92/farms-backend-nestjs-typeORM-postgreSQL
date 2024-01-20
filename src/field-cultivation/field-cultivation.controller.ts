@@ -5,14 +5,10 @@ import {
   Delete,
   Body,
   Param,
-  UseGuards,
   Patch,
 } from '@nestjs/common';
 import { FieldCultivationService } from './field-cultivation.service';
 import { FieldCultivation } from './field-cultivation.entity';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { UserRightsDec } from 'src/auth/user-rights.decorator';
-import { UserRights } from 'src/user/user.entity';
 import { CreateFieldCultivationDto } from './dto/create-field-cultivation.dto';
 
 @Controller('field-cultivation')
@@ -21,22 +17,16 @@ export class FieldCultivationController {
     private readonly fieldCultivationService: FieldCultivationService,
   ) {}
 
-  @UseGuards(AuthGuard)
-  @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR, UserRights.VIEWER)
   @Get()
   findAll(): Promise<FieldCultivation[]> {
     return this.fieldCultivationService.findAll();
   }
 
-  @UseGuards(AuthGuard)
-  @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR, UserRights.VIEWER)
   @Get(':id')
   findOne(@Param('id') id: string): Promise<FieldCultivation> {
     return this.fieldCultivationService.findOne(id);
   }
 
-  @UseGuards(AuthGuard)
-  @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR)
   @Post()
   create(
     @Body() createFieldCultivationDto: Partial<CreateFieldCultivationDto>,
@@ -55,8 +45,6 @@ export class FieldCultivationController {
     return this.fieldCultivationService.create(fieldCultivation);
   }
 
-  @UseGuards(AuthGuard)
-  @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR)
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -65,15 +53,11 @@ export class FieldCultivationController {
     return this.fieldCultivationService.update(id, updateFieldCultivationDto);
   }
 
-  @UseGuards(AuthGuard)
-  @UserRightsDec(UserRights.OWNER, UserRights.OPERATOR)
   @Delete(':id')
   remove(@Param('id') id: string): Promise<{ message: string }> {
     return this.fieldCultivationService.remove(id);
   }
 
-  @UseGuards(AuthGuard)
-  @UserRightsDec(UserRights.OWNER)
   @Delete('perm-delete/:id')
   async permRemove(@Param('id') id: string): Promise<{ message: string }> {
     return this.fieldCultivationService.permDelete(id);

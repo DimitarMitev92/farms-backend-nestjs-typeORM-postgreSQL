@@ -1,15 +1,15 @@
 import { IsNotEmpty, IsUUID, IsDate } from 'class-validator';
 
 export class CreateFieldCultivationDto {
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Cultivation id cannot be empty' })
   @IsUUID()
   readonly cultivationId: string;
 
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Machinery id cannot be empty' })
   @IsUUID()
   readonly machineryId: string;
 
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Growing process id cannot be empty' })
   @IsUUID()
   growingProcessId: string;
 

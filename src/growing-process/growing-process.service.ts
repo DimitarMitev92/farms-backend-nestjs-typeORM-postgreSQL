@@ -42,6 +42,14 @@ export class GrowingProcessService {
   async create(
     createGrowingProcessDto: CreateGrowingProcessDto,
   ): Promise<GrowingProcess> {
+    if (!createGrowingProcessDto.cropId) {
+      throw new BadRequestException('Crop id is required.');
+    }
+
+    if (!createGrowingProcessDto.fieldId) {
+      throw new BadRequestException('Field id is required.');
+    }
+
     const growingProcess = new GrowingProcess();
     const cropIdExist = await this.cropRepository.findOne({
       where: { id: createGrowingProcessDto.cropId, deletedAt: null },

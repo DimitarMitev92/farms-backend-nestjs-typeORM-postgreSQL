@@ -34,6 +34,9 @@ export class SoilService {
   }
 
   async create(createSoilDto: CreateSoilDto): Promise<Soil> {
+    if (!createSoilDto.soil) {
+      throw new BadRequestException('Soil is required.');
+    }
     const soil = new Soil();
     const soilName = await this.soilRepository.findOne({
       where: { soil: createSoilDto.soil, deletedAt: null },
@@ -48,6 +51,9 @@ export class SoilService {
   }
 
   async update(id: string, updateSoilDto: CreateSoilDto): Promise<Soil> {
+    if (!updateSoilDto.soil) {
+      throw new BadRequestException('Soil is required.');
+    }
     const soil = await this.checkSoilExists(id);
     soil.soil = updateSoilDto.soil;
     return await this.soilRepository.save(soil);

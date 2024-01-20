@@ -1,17 +1,18 @@
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
 export class CreateFieldDto {
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Field name cannot be empty' })
+  @IsString()
   readonly name: string;
 
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Filed boundaries cannot be empty' })
   readonly boundaries: { type: string; coordinates: number[][] };
 
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Soil id cannot be empty' })
   @IsUUID()
   readonly soilId: string;
 
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Farm id cannot be empty' })
   @IsUUID()
   readonly farmId: string;
 }

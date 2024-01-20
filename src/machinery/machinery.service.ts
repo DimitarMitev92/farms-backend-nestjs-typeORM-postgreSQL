@@ -41,6 +41,24 @@ export class MachineryService {
   }
 
   async create(createMachineryDto: CreateMachineryDto): Promise<Machinery> {
+    if (!createMachineryDto.brand) {
+      throw new BadRequestException('Machinery brand is required.');
+    }
+
+    if (!createMachineryDto.model) {
+      throw new BadRequestException('Machinery model is required.');
+    }
+
+    if (!createMachineryDto.identificationNumber) {
+      throw new BadRequestException(
+        'Machinery identification number is required.',
+      );
+    }
+
+    if (!createMachineryDto.farmId) {
+      throw new BadRequestException('Farm id is required.');
+    }
+
     const machinery = new Machinery();
     const identificationNumberExist = await this.machineryRepository.findOne({
       where: {

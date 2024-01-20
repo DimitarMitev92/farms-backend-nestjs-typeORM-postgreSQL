@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsUUID } from 'class-validator';
 
 export class CreateMachineryDto {
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Farm id cannot be empty' })
   @IsUUID()
   farmId: string;
 

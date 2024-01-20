@@ -34,6 +34,14 @@ export class FarmService {
   }
 
   async create(createFarmDto: CreateFarmDto): Promise<Farm> {
+    if (!createFarmDto.name) {
+      throw new BadRequestException('Farm name is required.');
+    }
+
+    if (!createFarmDto.location) {
+      throw new BadRequestException('Farm location is required.');
+    }
+
     const farm = new Farm();
     const farmName = await this.farmRepository.findOne({
       where: { name: createFarmDto.name, deletedAt: null },

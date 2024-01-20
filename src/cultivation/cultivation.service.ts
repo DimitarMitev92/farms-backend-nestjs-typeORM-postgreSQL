@@ -36,19 +36,25 @@ export class CultivationService {
   async create(
     createCultivationDto: CreateCultivationDto,
   ): Promise<Cultivation> {
-    const cultivation = new Cultivation();
-    const cultivationName = await this.cultivationRepository.findOne({
+    if (!createCultivationDto.cultivation) {
+      throw new BadRequestException('Cultivation name is required.');
+    }
+
+    const existingCultivation = await this.cultivationRepository.findOne({
       where: {
         cultivation: createCultivationDto.cultivation,
         deletedAt: null,
       },
     });
-    if (cultivationName) {
+    if (existingCultivation) {
       throw new BadRequestException(
         'Cultivation with this name already exists. Change it!',
       );
     }
+
+    const cultivation = new Cultivation();
     cultivation.cultivation = createCultivationDto.cultivation;
+
     return await this.cultivationRepository.save(cultivation);
   }
 
@@ -56,8 +62,13 @@ export class CultivationService {
     id: string,
     updateCultivationDto: CreateCultivationDto,
   ): Promise<Cultivation> {
+    if (!updateCultivationDto.cultivation) {
+      throw new BadRequestException('Cultivation name is required.');
+    }
+
     const cultivation = await this.checkCultivationExists(id);
     cultivation.cultivation = updateCultivationDto.cultivation;
+
     return await this.cultivationRepository.save(cultivation);
   }
 

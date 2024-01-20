@@ -44,6 +44,22 @@ export class FieldService {
   }
 
   async create(createFieldDto: CreateFieldDto): Promise<Field> {
+    if (!createFieldDto.name) {
+      throw new BadRequestException('Field name is required.');
+    }
+
+    if (!createFieldDto.boundaries) {
+      throw new BadRequestException('Field boundaries is required.');
+    }
+
+    if (!createFieldDto.farmId) {
+      throw new BadRequestException('Farm id is required.');
+    }
+
+    if (!createFieldDto.soilId) {
+      throw new BadRequestException('Soil id is required.');
+    }
+
     const field = new Field();
     const fieldName = await this.fieldRepository.findOne({
       where: { name: createFieldDto.name },

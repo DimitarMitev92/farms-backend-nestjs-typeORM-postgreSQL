@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 
 export class CreateSoilDto {
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Soil cannot be empty' })
   readonly soil: string;
 }

@@ -1,11 +1,11 @@
 import { IsNotEmpty, IsUUID } from 'class-validator';
 
 export class CreateGrowingProcessDto {
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Crop id cannot be empty' })
   @IsUUID()
   readonly cropId: string;
 
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Field id cannot be empty' })
   @IsUUID()
   readonly fieldId: string;
 }

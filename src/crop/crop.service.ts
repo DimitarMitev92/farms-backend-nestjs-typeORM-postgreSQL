@@ -34,22 +34,33 @@ export class CropService {
   }
 
   async create(createCropDto: CreateCropDto): Promise<Crop> {
-    const crop = new Crop();
-    const cropName = await this.cropRepository.findOne({
+    if (!createCropDto.crop) {
+      throw new BadRequestException('Crop name is required.');
+    }
+
+    const existingCrop = await this.cropRepository.findOne({
       where: { crop: createCropDto.crop, deletedAt: null },
     });
-    if (cropName) {
+    if (existingCrop) {
       throw new BadRequestException(
         'Crop with this name already exists. Change it!',
       );
     }
+
+    const crop = new Crop();
     crop.crop = createCropDto.crop;
+
     return await this.cropRepository.save(crop);
   }
 
   async update(id: string, updateCropDto: CreateCropDto): Promise<Crop> {
+    if (!updateCropDto.crop) {
+      throw new BadRequestException('Crop name is required.');
+    }
+
     const crop = await this.checkCropExists(id);
     crop.crop = updateCropDto.crop;
+
     return await this.cropRepository.save(crop);
   }
 

@@ -49,6 +49,18 @@ export class FieldCultivationService {
   async create(
     createFieldCultivationDto: CreateFieldCultivationDto,
   ): Promise<FieldCultivation> {
+    if (!createFieldCultivationDto.cultivationId) {
+      throw new BadRequestException('Cultivation id is required.');
+    }
+
+    if (!createFieldCultivationDto.growingProcessId) {
+      throw new BadRequestException('Growing process id is required.');
+    }
+
+    if (!createFieldCultivationDto.machineryId) {
+      throw new BadRequestException('Machinery id is required.');
+    }
+
     const fieldCultivation = new FieldCultivation();
     const cultivationIdExist = await this.cultivationRepository.findOne({
       where: { id: createFieldCultivationDto.cultivationId, deletedAt: null },

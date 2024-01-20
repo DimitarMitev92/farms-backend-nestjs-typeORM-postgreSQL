@@ -34,7 +34,10 @@ export class FieldController {
   create(@Body() createFieldDto: Partial<CreateFieldDto>): Promise<Field> {
     const field: Field = {
       name: createFieldDto.name,
-      boundaries: createFieldDto.boundaries,
+      boundaries: {
+        type: 'Polygon',
+        coordinates: createFieldDto.boundaries.coordinates,
+      },
       soilId: createFieldDto.soilId,
       farmId: createFieldDto.farmId,
       id: undefined,

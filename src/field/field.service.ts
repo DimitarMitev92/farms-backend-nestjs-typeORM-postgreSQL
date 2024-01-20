@@ -70,7 +70,12 @@ export class FieldService {
       );
     }
     const fieldBoundaries = await this.fieldRepository.findOne({
-      where: { boundaries: createFieldDto.boundaries },
+      where: {
+        boundaries: {
+          type: 'Polygon',
+          coordinates: createFieldDto.boundaries.coordinates,
+        },
+      },
     });
     if (fieldBoundaries) {
       throw new BadRequestException(
@@ -90,7 +95,10 @@ export class FieldService {
       throw new BadRequestException('Invalid farm id.');
     }
     field.name = createFieldDto.name;
-    field.boundaries = createFieldDto.boundaries;
+    field.boundaries = {
+      type: 'Polygon',
+      coordinates: createFieldDto.boundaries.coordinates,
+    };
     field.soilId = createFieldDto.soilId;
     field.farmId = createFieldDto.farmId;
     return await this.fieldRepository.save(field);
@@ -121,7 +129,14 @@ export class FieldService {
       throw new BadRequestException('Invalid farm id.');
     }
 
-    field = { ...field, ...updateFieldDto };
+    field = {
+      ...field,
+      ...updateFieldDto,
+      boundaries: {
+        type: 'Polygon',
+        coordinates: updateFieldDto.boundaries?.coordinates,
+      },
+    };
 
     return await this.fieldRepository.save(field);
   }
@@ -195,33 +210,14 @@ export class FieldService {
 // GROUP BY soil.soil
 // LIMIT 1
 
-// "boundaries": {
-//   "type": "POLYGON",
-//   "coordinates":
-//       [
-//       [
-//           12.647130489349365,
-//           42.50344840114576
-//       ],
-//       [
-//           12.64714390039444,
-//           42.50350327460589
-//       ],
-//       [
-//           12.647164016962051,
-//           42.50354924963
-//       ],
-//       [
-//           12.647190168499947,
-//           42.503586326237695
-//       ],
-//       [
-//           12.647204920649529,
-//           42.503630818137964
-//       ],
-//       [
-//           12.647208273410797,
-//           42.503683219668744
-//       ]
+// boundaries: {
+//   "type": "Polygon",
+//   "coordinates": [
+//     [
+//       [30.123456, 40.654321],
+//       [35.987654, 45.321098],
+//       [25.345678, 36.789012],
+//       [30.123456, 40.654321]
 //     ]
-// },
+//   ]
+// }

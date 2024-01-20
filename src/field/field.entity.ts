@@ -7,10 +7,13 @@ import {
   DeleteDateColumn,
   ManyToOne,
   JoinColumn,
+  Polygon,
 } from 'typeorm';
 import { IsNotEmpty, IsUUID } from 'class-validator';
 import { Soil } from 'src/soil/soil.entity';
 import { Farm } from 'src/farm/farm.entity';
+
+type JsonbPolygon = { type: 'Polygon'; coordinates: number[][][] };
 
 @Entity()
 export class Field {
@@ -21,9 +24,20 @@ export class Field {
   @IsNotEmpty({ message: 'Name cannot be empty' })
   name: string;
 
-  @Column({ type: 'jsonb' })
-  @IsNotEmpty({ message: 'Boundaries cannot be empty' })
-  boundaries: { type: string; coordinates: number[][] };
+  @Column({
+    type: 'jsonb',
+    transformer: {
+      to: (value: Polygon) => ({
+        type: 'Polygon',
+        coordinates: value.coordinates,
+      }),
+      from: (value: JsonbPolygon) => ({
+        coordinates: value.coordinates,
+        type: 'Polygon',
+      }),
+    },
+  })
+  boundaries: JsonbPolygon;
 
   @ManyToOne(() => Soil, (soil) => soil.id)
   @JoinColumn({ name: 'soil_id' })

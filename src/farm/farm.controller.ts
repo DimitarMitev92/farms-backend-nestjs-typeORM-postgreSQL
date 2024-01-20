@@ -34,7 +34,10 @@ export class FarmController {
   create(@Body() createFarmDto: CreateFarmDto): Promise<Farm> {
     const farm: Farm = {
       name: createFarmDto.name,
-      location: createFarmDto.location,
+      location: {
+        type: 'Point',
+        coordinates: createFarmDto.location.coordinates,
+      },
       id: undefined,
       createdAt: undefined,
       updatedAt: undefined,

@@ -52,7 +52,13 @@ export class FarmService {
       );
     }
     const farmWithSameLocation = await this.farmRepository.findOne({
-      where: { location: createFarmDto.location, deletedAt: null },
+      where: {
+        location: {
+          type: 'Point',
+          coordinates: createFarmDto.location.coordinates,
+        },
+        deletedAt: null,
+      },
     });
     if (farmWithSameLocation) {
       throw new BadRequestException(
@@ -60,7 +66,10 @@ export class FarmService {
       );
     }
     farm.name = createFarmDto.name;
-    farm.location = createFarmDto.location;
+    farm.location = {
+      type: 'Point',
+      coordinates: createFarmDto.location.coordinates,
+    };
     return await this.farmRepository.save(farm);
   }
 
@@ -76,7 +85,14 @@ export class FarmService {
       throw new NotFoundException(`Farm with id ${id} not found`);
     }
 
-    farm = { ...farm, ...updateFarmDto };
+    farm = {
+      ...farm,
+      ...updateFarmDto,
+      location: {
+        type: 'Point',
+        coordinates: updateFarmDto.location?.coordinates,
+      },
+    };
 
     return await this.farmRepository.save(farm);
   }
@@ -98,6 +114,6 @@ export class FarmService {
 //   "name": "test2",
 //   "location": {
 //       "type": "Point",
-//       "location": [123.123,123.123]
+//       "location": [10.123456,20.654321]
 //   }
 // }

@@ -7,6 +7,9 @@ import {
   DeleteDateColumn,
 } from 'typeorm';
 import { IsNotEmpty } from 'class-validator';
+import { Point } from 'geojson';
+
+type JsonbPoint = { type: 'Point'; coordinates: [number, number] };
 
 @Entity()
 export class Farm {
@@ -17,9 +20,18 @@ export class Farm {
   @IsNotEmpty({ message: 'Name cannot be empty' })
   name: string;
 
-  @Column({ type: 'jsonb' })
+  @Column({
+    type: 'jsonb',
+    transformer: {
+      to: (value: Point) => ({ type: 'Point', coordinates: value.coordinates }),
+      from: (value: JsonbPoint) => ({
+        coordinates: value.coordinates,
+        type: 'Point',
+      }),
+    },
+  })
   @IsNotEmpty({ message: 'Location cannot be empty' })
-  location: { type: string; location: number[] };
+  location: JsonbPoint;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

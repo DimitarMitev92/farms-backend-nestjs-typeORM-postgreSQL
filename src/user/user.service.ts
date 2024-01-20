@@ -24,7 +24,9 @@ export class UserService {
 
   async findOne(id: string): Promise<User> {
     try {
-      return this.userRepository.findOne({ where: { id, deletedAt: null } });
+      return this.userRepository.findOne({
+        where: { id, deletedAt: null },
+      });
     } catch (error) {
       throw new InternalServerErrorException('Error while fetching user');
     }

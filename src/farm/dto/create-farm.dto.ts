@@ -1,19 +1,10 @@
-import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
-
-class PointDto {
-  @IsNotEmpty()
-  @Type(() => Number)
-  readonly coordinates: [number, number];
-}
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateFarmDto {
-  @IsNotEmpty({ message: 'Farm name cannot be empty' })
+  @IsNotEmpty({ message: 'Name cannot be empty' })
   @IsString()
   readonly name: string;
 
-  @IsNotEmpty({ message: 'Farm location cannot be empty' })
-  @ValidateNested()
-  @Type(() => PointDto)
-  readonly location: PointDto;
+  @IsNotEmpty({ message: 'Location cannot be empty' })
+  readonly location: { type: 'Point'; coordinates: [number, number] };
 }

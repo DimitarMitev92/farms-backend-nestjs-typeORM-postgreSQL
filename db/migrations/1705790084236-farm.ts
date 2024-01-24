@@ -14,7 +14,7 @@ export class CreateFarmTable1705790084236 implements MigrationInterface {
             default: 'uuid_generate_v4()',
           },
           { name: 'name', type: 'varchar', isNullable: false },
-          { name: 'location', type: 'point', isNullable: false },
+          { name: 'location', type: 'jsonb', isNullable: false },
           {
             name: 'created_at',
             type: 'timestamp',

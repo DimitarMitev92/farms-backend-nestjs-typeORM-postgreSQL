@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export class CreateUserTable1705790084232 implements MigrationInterface {
+export class CreateUserTable1705048734728 implements MigrationInterface {
   name = 'CreateUserTable1705048734728';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -20,7 +20,9 @@ export class CreateUserTable1705790084232 implements MigrationInterface {
           { name: 'password', type: 'varchar', isNullable: false },
           {
             name: 'rights',
-            type: 'varchar', // Change to the appropriate type, it seems like an enum or string type
+            type: 'enum',
+            enum: ['OWNER', 'OPERATOR', 'VIEWER'],
+            default: "'VIEWER'",
             isNullable: false,
           },
           {

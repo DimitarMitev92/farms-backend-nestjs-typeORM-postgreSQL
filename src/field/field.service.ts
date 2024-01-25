@@ -108,7 +108,7 @@ export class FieldService {
     id: string,
     updateFieldDto: Partial<CreateFieldDto>,
   ): Promise<Field> {
-    let field = await this.fieldRepository.findOne({
+    const field = await this.fieldRepository.findOne({
       where: { id, deletedAt: null },
     });
 
@@ -129,14 +129,17 @@ export class FieldService {
       throw new BadRequestException('Invalid farm id.');
     }
 
-    field = {
-      ...field,
-      ...updateFieldDto,
-      boundaries: {
+    field.name = updateFieldDto.name || field.name;
+
+    if (updateFieldDto.boundaries) {
+      field.boundaries = {
         type: 'Polygon',
-        coordinates: updateFieldDto.boundaries?.coordinates,
-      },
-    };
+        coordinates: updateFieldDto.boundaries.coordinates,
+      };
+    }
+
+    field.farmId = updateFieldDto.farmId || field.farmId;
+    field.soilId = updateFieldDto.soilId || field.soilId;
 
     return await this.fieldRepository.save(field);
   }

@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { Machinery } from './machinery.entity';
 import { CreateMachineryDto } from './dto/create-machinery.dto';
 import { Farm } from 'src/farm/farm.entity';
@@ -38,6 +38,19 @@ export class MachineryService {
 
   async findOne(id: string): Promise<Machinery> {
     return this.checkMachineryExists(id);
+  }
+
+  async findOneForUpdate(id: string): Promise<Machinery> {
+    const machinery = await this.machineryRepository.findOne({
+      where: { id },
+      relations: ['farmId'],
+    });
+
+    if (!machinery) {
+      throw new NotFoundException("machinery with this id doesn't exist");
+    }
+
+    return machinery;
   }
 
   async create(createMachineryDto: CreateMachineryDto): Promise<Machinery> {
@@ -99,6 +112,7 @@ export class MachineryService {
       where: {
         identificationNumber: updateMachineryDto.identificationNumber,
         deletedAt: null,
+        id: Not(id),
       },
     });
     if (identificationNumberExist) {
@@ -106,6 +120,7 @@ export class MachineryService {
         'Machinery with this identification number is already in the database.',
       );
     }
+
     const farmIdExist = await this.farmRepository.findOne({
       where: { id: updateMachineryDto.farmId, deletedAt: null },
     });

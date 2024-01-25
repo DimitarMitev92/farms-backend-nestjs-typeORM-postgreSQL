@@ -29,6 +29,12 @@ export class MachineryController {
     return this.machineryService.findOne(id);
   }
 
+  @Get('update/:id')
+  @Roles([UserRights.OWNER, UserRights.OPERATOR, UserRights.VIEWER])
+  findOneForUpdate(@Param('id') id: string): Promise<Machinery> {
+    return this.machineryService.findOneForUpdate(id);
+  }
+
   @Post()
   @Roles([UserRights.OWNER, UserRights.OPERATOR])
   create(@Body() createMachineryDto: CreateMachineryDto): Promise<Machinery> {

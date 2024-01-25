@@ -43,6 +43,17 @@ export class FieldService {
     return this.checkFieldExists(id);
   }
 
+  async findOneForUpdate(id: string): Promise<Field> {
+    const field = await this.fieldRepository.findOne({
+      where: { id },
+      relations: ['soilId', 'farmId'],
+    });
+    if (!field) {
+      throw new NotFoundException("Field with this id doesn't exist");
+    }
+    return field;
+  }
+
   async create(createFieldDto: CreateFieldDto): Promise<Field> {
     if (!createFieldDto.name) {
       throw new BadRequestException('Field name is required.');

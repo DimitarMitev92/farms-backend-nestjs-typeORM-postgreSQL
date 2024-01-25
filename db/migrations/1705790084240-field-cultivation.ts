@@ -22,8 +22,8 @@ export class CreateFieldCultivationTable1705790084240
           },
           { name: 'cultivation_id', type: 'uuid', isNullable: false },
           { name: 'machinery_id', type: 'uuid', isNullable: false },
-          { name: 'growing_period_id', type: 'uuid', isNullable: false },
-          { name: 'starting_date', type: 'date', isNullable: false },
+          { name: 'growing_process_id', type: 'uuid', isNullable: false },
+          { name: 'starting_date', type: 'date', isNullable: true },
           {
             name: 'created_at',
             type: 'timestamp',
@@ -42,7 +42,6 @@ export class CreateFieldCultivationTable1705790084240
       true,
     );
 
-    // Добавете външни ключове
     await queryRunner.createForeignKey(
       'field_cultivation',
       new TableForeignKey({
@@ -66,19 +65,18 @@ export class CreateFieldCultivationTable1705790084240
     await queryRunner.createForeignKey(
       'field_cultivation',
       new TableForeignKey({
-        columnNames: ['growing_period_id'],
+        columnNames: ['growing_process_id'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'growing_period',
+        referencedTableName: 'growing_process',
         onDelete: 'CASCADE',
       }),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Изтрийте външни ключове преди табличната структура
     await queryRunner.dropForeignKey('field_cultivation', 'cultivation_id');
     await queryRunner.dropForeignKey('field_cultivation', 'machinery_id');
-    await queryRunner.dropForeignKey('field_cultivation', 'growing_period_id');
+    await queryRunner.dropForeignKey('field_cultivation', 'growing_process_id');
 
     await queryRunner.dropTable('field_cultivation', true, true, true);
   }

@@ -19,7 +19,7 @@ export class CreateFieldTable1705790084237 implements MigrationInterface {
             default: 'uuid_generate_v4()',
           },
           { name: 'name', type: 'varchar', isNullable: false },
-          { name: 'boundaries', type: 'polygon', isNullable: false },
+          { name: 'boundaries', type: 'jsonb', isNullable: false },
           { name: 'soil_id', type: 'uuid', isNullable: false },
           { name: 'farm_id', type: 'uuid', isNullable: false },
           {
@@ -40,7 +40,6 @@ export class CreateFieldTable1705790084237 implements MigrationInterface {
       true,
     );
 
-    // Добавете външни ключове
     await queryRunner.createForeignKey(
       'field',
       new TableForeignKey({
@@ -63,7 +62,6 @@ export class CreateFieldTable1705790084237 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Изтрийте външните ключове преди табличната структура
     await queryRunner.dropForeignKey('field', 'soil_id');
     await queryRunner.dropForeignKey('field', 'farm_id');
 

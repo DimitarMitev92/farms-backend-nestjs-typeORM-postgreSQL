@@ -5,13 +5,13 @@ import {
   TableForeignKey,
 } from 'typeorm';
 
-export class CreateGrowingPeriodTable1705790084239
+export class CreateGrowingProcessTable1705790084239
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'growing_period',
+        name: 'growing_process',
         columns: [
           {
             name: 'id',
@@ -40,9 +40,8 @@ export class CreateGrowingPeriodTable1705790084239
       true,
     );
 
-    // Добавете външни ключове
     await queryRunner.createForeignKey(
-      'growing_period',
+      'growing_process',
       new TableForeignKey({
         columnNames: ['crop_id'],
         referencedColumnNames: ['id'],
@@ -52,7 +51,7 @@ export class CreateGrowingPeriodTable1705790084239
     );
 
     await queryRunner.createForeignKey(
-      'growing_period',
+      'growing_process',
       new TableForeignKey({
         columnNames: ['field_id'],
         referencedColumnNames: ['id'],
@@ -63,10 +62,9 @@ export class CreateGrowingPeriodTable1705790084239
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Изтрийте външни ключове преди табличната структура
-    await queryRunner.dropForeignKey('growing_period', 'crop_id');
-    await queryRunner.dropForeignKey('growing_period', 'field_id');
+    await queryRunner.dropForeignKey('growing_process', 'crop_id');
+    await queryRunner.dropForeignKey('growing_process', 'field_id');
 
-    await queryRunner.dropTable('growing_period', true, true, true);
+    await queryRunner.dropTable('growing_process', true, true, true);
   }
 }

@@ -46,6 +46,19 @@ export class FieldCultivationService {
     return this.checkFieldCultivationExists(id);
   }
 
+  async findOneForUpdate(id: string): Promise<FieldCultivation> {
+    const fieldCultivation = await this.fieldCultivationRepository.findOne({
+      where: { id },
+      relations: ['cultivationId', 'machineryId', 'growingProcessId'],
+    });
+    if (!fieldCultivation) {
+      throw new NotFoundException(
+        "Field cultivation with this id doesn't exist",
+      );
+    }
+    return fieldCultivation;
+  }
+
   async create(
     createFieldCultivationDto: CreateFieldCultivationDto,
   ): Promise<FieldCultivation> {

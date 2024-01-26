@@ -39,6 +39,17 @@ export class GrowingProcessService {
     return this.checkGrowingProcessExists(id);
   }
 
+  async findOneForUpdate(id: string): Promise<GrowingProcess> {
+    const growingProcess = await this.growingProcessRepository.findOne({
+      where: { id },
+      relations: ['cropId', 'fieldId'],
+    });
+    if (!growingProcess) {
+      throw new NotFoundException("Growing process with this id doesn't exist");
+    }
+    return growingProcess;
+  }
+
   async create(
     createGrowingProcessDto: CreateGrowingProcessDto,
   ): Promise<GrowingProcess> {

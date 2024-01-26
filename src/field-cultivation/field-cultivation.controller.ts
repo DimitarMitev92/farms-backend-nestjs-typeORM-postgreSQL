@@ -31,6 +31,12 @@ export class FieldCultivationController {
     return this.fieldCultivationService.findOne(id);
   }
 
+  @Get('update/:id')
+  @Roles([UserRights.OWNER, UserRights.OPERATOR, UserRights.VIEWER])
+  findOneForUpdate(@Param('id') id: string): Promise<FieldCultivation> {
+    return this.fieldCultivationService.findOneForUpdate(id);
+  }
+
   @Post()
   @Roles([UserRights.OWNER, UserRights.OPERATOR, UserRights.VIEWER])
   create(

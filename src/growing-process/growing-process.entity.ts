@@ -1,30 +1,25 @@
 import {
   Entity,
+  Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  ManyToOne,
-  JoinColumn,
 } from 'typeorm';
 import { IsNotEmpty, IsUUID } from 'class-validator';
-import { Crop } from 'src/crop/crop.entity';
-import { Field } from 'src/field/field.entity';
 
 @Entity()
 export class GrowingProcess {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @IsNotEmpty()
-  @ManyToOne(() => Crop, (crop) => crop.id)
-  @JoinColumn({ name: 'crop_id' })
+  @Column({ name: 'crop_id' })
+  @IsNotEmpty({ message: 'Crop id cannot be empty' })
   @IsUUID()
   cropId: string;
 
-  @IsNotEmpty()
-  @ManyToOne(() => Field, (field) => field.id)
-  @JoinColumn({ name: 'field_id' })
+  @Column({ name: 'field_id' })
+  @IsNotEmpty({ message: 'Field id cannot be empty' })
   @IsUUID()
   fieldId: string;
 

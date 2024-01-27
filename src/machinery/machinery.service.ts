@@ -40,19 +40,6 @@ export class MachineryService {
     return this.checkMachineryExists(id);
   }
 
-  async findOneForUpdate(id: string): Promise<Machinery> {
-    const machinery = await this.machineryRepository.findOne({
-      where: { id },
-      relations: ['farmId'],
-    });
-
-    if (!machinery) {
-      throw new NotFoundException("machinery with this id doesn't exist");
-    }
-
-    return machinery;
-  }
-
   async create(createMachineryDto: CreateMachineryDto): Promise<Machinery> {
     if (!createMachineryDto.brand) {
       throw new BadRequestException('Machinery brand is required.');
@@ -104,6 +91,7 @@ export class MachineryService {
     let machinery = await this.machineryRepository.findOne({
       where: { id, deletedAt: null },
     });
+
     if (!machinery) {
       throw new NotFoundException(`Machinery with id ${id} not found`);
     }
@@ -128,7 +116,10 @@ export class MachineryService {
       throw new BadRequestException('Invalid farm id.');
     }
 
-    machinery = { ...machinery, ...updateMachineryDto };
+    machinery = {
+      ...machinery,
+      ...updateMachineryDto,
+    };
 
     return await this.machineryRepository.save(machinery);
   }

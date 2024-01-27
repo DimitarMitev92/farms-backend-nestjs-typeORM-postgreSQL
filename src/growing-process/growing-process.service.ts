@@ -39,17 +39,6 @@ export class GrowingProcessService {
     return this.checkGrowingProcessExists(id);
   }
 
-  async findOneForUpdate(id: string): Promise<GrowingProcess> {
-    const growingProcess = await this.growingProcessRepository.findOne({
-      where: { id },
-      relations: ['cropId', 'fieldId'],
-    });
-    if (!growingProcess) {
-      throw new NotFoundException("Growing process with this id doesn't exist");
-    }
-    return growingProcess;
-  }
-
   async create(
     createGrowingProcessDto: CreateGrowingProcessDto,
   ): Promise<GrowingProcess> {
@@ -97,6 +86,7 @@ export class GrowingProcessService {
     if (!cropIdExist) {
       throw new BadRequestException('Invalid crop id.');
     }
+
     const fieldIdExist = await this.fieldRepository.findOne({
       where: { id: updateGrowingProcessDto.fieldId, deletedAt: null },
     });
@@ -104,7 +94,10 @@ export class GrowingProcessService {
       throw new BadRequestException('Invalid field id.');
     }
 
-    growingProcess = { ...growingProcess, ...updateGrowingProcessDto };
+    growingProcess = {
+      ...growingProcess,
+      ...updateGrowingProcessDto,
+    };
 
     return await this.growingProcessRepository.save(growingProcess);
   }

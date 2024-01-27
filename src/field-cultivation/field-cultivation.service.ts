@@ -46,19 +46,6 @@ export class FieldCultivationService {
     return this.checkFieldCultivationExists(id);
   }
 
-  async findOneForUpdate(id: string): Promise<FieldCultivation> {
-    const fieldCultivation = await this.fieldCultivationRepository.findOne({
-      where: { id },
-      relations: ['cultivationId', 'machineryId', 'growingProcessId'],
-    });
-    if (!fieldCultivation) {
-      throw new NotFoundException(
-        "Field cultivation with this id doesn't exist",
-      );
-    }
-    return fieldCultivation;
-  }
-
   async create(
     createFieldCultivationDto: CreateFieldCultivationDto,
   ): Promise<FieldCultivation> {
@@ -111,6 +98,7 @@ export class FieldCultivationService {
     let fieldCultivation = await this.fieldCultivationRepository.findOne({
       where: { id, deletedAt: null },
     });
+
     if (!fieldCultivation) {
       throw new NotFoundException(`Field cultivation with id ${id} not found`);
     }
@@ -139,7 +127,10 @@ export class FieldCultivationService {
       throw new BadRequestException('Invalid growing process id.');
     }
 
-    fieldCultivation = { ...fieldCultivation, ...updateFieldCultivationDto };
+    fieldCultivation = {
+      ...fieldCultivation,
+      ...updateFieldCultivationDto,
+    };
 
     return await this.fieldCultivationRepository.save(fieldCultivation);
   }

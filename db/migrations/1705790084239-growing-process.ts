@@ -1,9 +1,4 @@
-import {
-  MigrationInterface,
-  QueryRunner,
-  Table,
-  TableForeignKey,
-} from 'typeorm';
+import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
 export class CreateGrowingProcessTable1705790084239
   implements MigrationInterface
@@ -39,32 +34,9 @@ export class CreateGrowingProcessTable1705790084239
       }),
       true,
     );
-
-    await queryRunner.createForeignKey(
-      'growing_process',
-      new TableForeignKey({
-        columnNames: ['crop_id'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'crop',
-        onDelete: 'CASCADE',
-      }),
-    );
-
-    await queryRunner.createForeignKey(
-      'growing_process',
-      new TableForeignKey({
-        columnNames: ['field_id'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'field',
-        onDelete: 'CASCADE',
-      }),
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropForeignKey('growing_process', 'crop_id');
-    await queryRunner.dropForeignKey('growing_process', 'field_id');
-
-    await queryRunner.dropTable('growing_process', true, true, true);
+    await queryRunner.dropTable('growing_period', true, true, true);
   }
 }

@@ -1,9 +1,4 @@
-import {
-  MigrationInterface,
-  QueryRunner,
-  Table,
-  TableForeignKey,
-} from 'typeorm';
+import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
 export class CreateFieldCultivationTable1705790084240
   implements MigrationInterface
@@ -23,7 +18,7 @@ export class CreateFieldCultivationTable1705790084240
           { name: 'cultivation_id', type: 'uuid', isNullable: false },
           { name: 'machinery_id', type: 'uuid', isNullable: false },
           { name: 'growing_process_id', type: 'uuid', isNullable: false },
-          { name: 'starting_date', type: 'date', isNullable: true },
+          { name: 'starting_date', type: 'date', isNullable: false },
           {
             name: 'created_at',
             type: 'timestamp',
@@ -41,43 +36,9 @@ export class CreateFieldCultivationTable1705790084240
       }),
       true,
     );
-
-    await queryRunner.createForeignKey(
-      'field_cultivation',
-      new TableForeignKey({
-        columnNames: ['cultivation_id'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'cultivation',
-        onDelete: 'CASCADE',
-      }),
-    );
-
-    await queryRunner.createForeignKey(
-      'field_cultivation',
-      new TableForeignKey({
-        columnNames: ['machinery_id'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'machinery',
-        onDelete: 'CASCADE',
-      }),
-    );
-
-    await queryRunner.createForeignKey(
-      'field_cultivation',
-      new TableForeignKey({
-        columnNames: ['growing_process_id'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'growing_process',
-        onDelete: 'CASCADE',
-      }),
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropForeignKey('field_cultivation', 'cultivation_id');
-    await queryRunner.dropForeignKey('field_cultivation', 'machinery_id');
-    await queryRunner.dropForeignKey('field_cultivation', 'growing_process_id');
-
     await queryRunner.dropTable('field_cultivation', true, true, true);
   }
 }

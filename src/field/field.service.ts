@@ -43,17 +43,6 @@ export class FieldService {
     return this.checkFieldExists(id);
   }
 
-  async findOneForUpdate(id: string): Promise<Field> {
-    const field = await this.fieldRepository.findOne({
-      where: { id },
-      relations: ['soilId', 'farmId'],
-    });
-    if (!field) {
-      throw new NotFoundException("Field with this id doesn't exist");
-    }
-    return field;
-  }
-
   async create(createFieldDto: CreateFieldDto): Promise<Field> {
     if (!createFieldDto.name) {
       throw new BadRequestException('Field name is required.');
@@ -119,7 +108,7 @@ export class FieldService {
     id: string,
     updateFieldDto: Partial<CreateFieldDto>,
   ): Promise<Field> {
-    const field = await this.fieldRepository.findOne({
+    let field = await this.fieldRepository.findOne({
       where: { id, deletedAt: null },
     });
 
@@ -140,19 +129,22 @@ export class FieldService {
       throw new BadRequestException('Invalid farm id.');
     }
 
-    field.name = updateFieldDto.name || field.name;
+    const oldField = { ...field };
 
-    if (updateFieldDto.boundaries) {
-      field.boundaries = {
+    field = {
+      ...field,
+      ...updateFieldDto,
+      boundaries: {
         type: 'Polygon',
-        coordinates: updateFieldDto.boundaries.coordinates,
-      };
-    }
+        coordinates:
+          updateFieldDto.boundaries?.coordinates ||
+          oldField.boundaries.coordinates,
+      },
+    };
 
-    field.farmId = updateFieldDto.farmId || field.farmId;
-    field.soilId = updateFieldDto.soilId || field.soilId;
+    field = await this.fieldRepository.save(field);
 
-    return await this.fieldRepository.save(field);
+    return field;
   }
 
   async remove(id: string): Promise<{ message: string }> {

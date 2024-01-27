@@ -29,12 +29,6 @@ export class FieldController {
     return this.fieldService.findOne(id);
   }
 
-  @Get('update/:id')
-  @Roles([UserRights.OWNER, UserRights.OPERATOR, UserRights.VIEWER])
-  findOneForUpdate(@Param('id') id: string): Promise<Field> {
-    return this.fieldService.findOneForUpdate(id);
-  }
-
   @Post()
   @Roles([UserRights.OWNER, UserRights.OPERATOR])
   create(@Body() createFieldDto: Partial<CreateFieldDto>): Promise<Field> {

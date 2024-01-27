@@ -77,7 +77,7 @@ export class FarmService {
     id: string,
     updateFarmDto: Partial<CreateFarmDto>,
   ): Promise<Farm> {
-    const farm = await this.farmRepository.findOne({
+    let farm = await this.farmRepository.findOne({
       where: { id, deletedAt: null },
     });
 
@@ -85,16 +85,21 @@ export class FarmService {
       throw new NotFoundException(`Farm with id ${id} not found`);
     }
 
-    farm.name = updateFarmDto.name || farm.name;
+    const oldFarm = { ...farm };
 
-    if (updateFarmDto.location) {
-      farm.location = {
+    farm = {
+      ...farm,
+      ...updateFarmDto,
+      location: {
         type: 'Point',
-        coordinates: updateFarmDto.location.coordinates,
-      };
-    }
+        coordinates:
+          updateFarmDto.location?.coordinates || oldFarm.location.coordinates,
+      },
+    };
 
-    return await this.farmRepository.save(farm);
+    farm = await this.farmRepository.save(farm);
+
+    return farm;
   }
 
   async remove(id: string): Promise<{ message: string }> {

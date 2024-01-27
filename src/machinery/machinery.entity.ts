@@ -4,20 +4,16 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  JoinColumn,
-  ManyToOne,
   Column,
 } from 'typeorm';
 import { IsNotEmpty, IsUUID } from 'class-validator';
-import { Farm } from 'src/farm/farm.entity';
 
 @Entity()
 export class Machinery {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Farm, (farm) => farm.id)
-  @JoinColumn({ name: 'farm_id' })
+  @Column({ name: 'farm_id' })
   @IsNotEmpty({ message: 'Farm id cannot be empty' })
   @IsUUID()
   farmId: string;

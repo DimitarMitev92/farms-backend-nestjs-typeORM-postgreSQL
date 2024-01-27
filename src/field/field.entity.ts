@@ -5,13 +5,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  ManyToOne,
-  JoinColumn,
   Polygon,
 } from 'typeorm';
 import { IsNotEmpty, IsUUID } from 'class-validator';
-import { Soil } from 'src/soil/soil.entity';
-import { Farm } from 'src/farm/farm.entity';
 
 type JsonbPolygon = { type: 'Polygon'; coordinates: number[][][] };
 
@@ -37,15 +33,16 @@ export class Field {
       }),
     },
   })
+  @IsNotEmpty({ message: 'Boundaries cannot be empty' })
   boundaries: JsonbPolygon;
 
-  @ManyToOne(() => Soil, (soil) => soil.id)
-  @JoinColumn({ name: 'soil_id' })
+  @Column({ name: 'soil_id', nullable: false })
+  @IsNotEmpty({ message: 'Soil id cannot be empty' })
   @IsUUID()
   soilId: string;
 
-  @ManyToOne(() => Farm, (farm) => farm.id)
-  @JoinColumn({ name: 'farm_id' })
+  @Column({ name: 'farm_id', nullable: false })
+  @IsNotEmpty({ message: 'Farm id cannot be empty' })
   @IsUUID()
   farmId: string;
 

@@ -29,12 +29,6 @@ export class GrowingProcessController {
     return this.growingProcessService.findOne(id);
   }
 
-  @Get('update/:id')
-  @Roles([UserRights.OWNER, UserRights.OPERATOR, UserRights.VIEWER])
-  findOneForUpdate(@Param('id') id: string): Promise<GrowingProcess> {
-    return this.growingProcessService.findOneForUpdate(id);
-  }
-
   @Post()
   @Roles([UserRights.OWNER, UserRights.OPERATOR])
   create(

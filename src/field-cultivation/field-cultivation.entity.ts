@@ -5,35 +5,27 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  ManyToOne,
-  JoinColumn,
 } from 'typeorm';
 import { IsNotEmpty, IsUUID } from 'class-validator';
-import { Cultivation } from 'src/cultivation/cultivation.entity';
-import { Machinery } from 'src/machinery/machinery.entity';
-import { GrowingProcess } from 'src/growing-process/growing-process.entity';
 
 @Entity()
 export class FieldCultivation {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Cultivation, (cultivation) => cultivation.id)
-  @JoinColumn({ name: 'cultivation_id' })
+  @Column({ name: 'cultivation_id' })
   @IsUUID()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Cultivation id cannot be empty' })
   cultivationId: string;
 
-  @ManyToOne(() => Machinery, (machinery) => machinery.id)
-  @JoinColumn({ name: 'machinery_id' })
+  @Column({ name: 'machinery_id' })
   @IsUUID()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Machinery id cannot be empty' })
   machineryId: string;
 
-  @ManyToOne(() => GrowingProcess, (growingProcess) => growingProcess.id)
-  @JoinColumn({ name: 'growing_process_id' })
+  @Column({ name: 'growing_process_id' })
   @IsUUID()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Growing process id cannot be empty' })
   growingProcessId: string;
 
   @Column({ name: 'starting_date', nullable: true })

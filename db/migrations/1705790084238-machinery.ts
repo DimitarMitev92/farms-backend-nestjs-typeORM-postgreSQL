@@ -1,9 +1,4 @@
-import {
-  MigrationInterface,
-  QueryRunner,
-  Table,
-  TableForeignKey,
-} from 'typeorm';
+import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
 export class CreateMachineryTable1705790084238 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -39,23 +34,9 @@ export class CreateMachineryTable1705790084238 implements MigrationInterface {
       }),
       true,
     );
-
-    // Добавете външен ключ
-    await queryRunner.createForeignKey(
-      'machinery',
-      new TableForeignKey({
-        columnNames: ['farm_id'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'farm',
-        onDelete: 'CASCADE',
-      }),
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Изтрийте външния ключ преди табличната структура
-    await queryRunner.dropForeignKey('machinery', 'farm_id');
-
     await queryRunner.dropTable('machinery', true, true, true);
   }
 }

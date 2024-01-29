@@ -3,6 +3,8 @@ import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { Public } from './public.decorator';
 
+import { LoggingUser } from './auth.service';
+
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -10,14 +12,21 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Public()
   @Post('login')
-  signIn(@Body() signInDto: CreateUserDto) {
+  signIn(
+    @Body() signInDto: CreateUserDto,
+  ): Promise<{ user: LoggingUser; access_token: string }> {
     return this.authService.signIn(signInDto.email, signInDto.password);
   }
 
   @HttpCode(HttpStatus.CREATED)
   @Public()
   @Post('register')
-  singUp(@Body() signUp: CreateUserDto) {
+  singUp(
+    @Body() signUp: CreateUserDto,
+  ): Promise<
+    | { user: LoggingUser; access_token: string }
+    | { statusCode: number; message: string }
+  > {
     return this.authService.signUp(signUp);
   }
 }

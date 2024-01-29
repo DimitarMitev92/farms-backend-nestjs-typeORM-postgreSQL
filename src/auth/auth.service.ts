@@ -10,6 +10,13 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UserRights } from 'src/user/user.entity';
 
+export interface LoggingUser {
+  firstName: string;
+  lastName: string;
+  email: string;
+  rights: string;
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -20,7 +27,7 @@ export class AuthService {
   async signIn(
     email: string,
     password: string,
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ user: LoggingUser; access_token: string }> {
     const user = await this.userService.findOneByEmail(email);
     if (!user) {
       throw new NotFoundException();
@@ -39,7 +46,15 @@ export class AuthService {
       rights: user.rights,
     };
 
+    const loggingedUser = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      rights: user.rights,
+    };
+
     return {
+      user: loggingedUser,
       access_token: await this.jwtService.signAsync(payload),
     };
   }
@@ -47,7 +62,8 @@ export class AuthService {
   async signUp(
     createUserDto: CreateUserDto,
   ): Promise<
-    { access_token: string } | { statusCode: number; message: string }
+    | { user: LoggingUser; access_token: string }
+    | { statusCode: number; message: string }
   > {
     const existingUser = await this.userService.findOneByEmail(
       createUserDto.email,
@@ -72,6 +88,16 @@ export class AuthService {
       rights: returnedUserFromBase.rights,
     };
 
-    return { access_token: await this.jwtService.signAsync(payload) };
+    const registeredUser = {
+      firstName: returnedUserFromBase.firstName,
+      lastName: returnedUserFromBase.lastName,
+      email: returnedUserFromBase.email,
+      rights: returnedUserFromBase.rights,
+    };
+
+    return {
+      user: registeredUser,
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 }

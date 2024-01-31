@@ -18,7 +18,7 @@ export class CreateFieldCultivationTable1705790084240
           { name: 'cultivation_id', type: 'uuid', isNullable: false },
           { name: 'machinery_id', type: 'uuid', isNullable: false },
           { name: 'growing_process_id', type: 'uuid', isNullable: false },
-          { name: 'starting_date', type: 'date', isNullable: false },
+          { name: 'starting_date', type: 'date', isNullable: true },
           {
             name: 'created_at',
             type: 'timestamp',

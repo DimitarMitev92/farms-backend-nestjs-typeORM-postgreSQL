@@ -91,7 +91,6 @@ export class MachineryService {
     let machinery = await this.machineryRepository.findOne({
       where: { id, deletedAt: null },
     });
-
     if (!machinery) {
       throw new NotFoundException(`Machinery with id ${id} not found`);
     }
@@ -177,12 +176,14 @@ export class MachineryService {
     return this.machineryRepository
       .createQueryBuilder('machinery')
       .select([
-        'CAST(COUNT(machinery.id) AS int) AS countMachinery',
+        'CAST(COUNT(machinery.id) AS int) AS count',
+        'farm.name as name',
+        'farm.location as location',
         'farm.id AS farmId',
       ])
       .innerJoin(Farm, 'farm', 'farm.id = machinery.farm_id')
       .groupBy('farm.id')
-      .orderBy('countMachinery', 'DESC')
+      .orderBy('count', 'DESC')
       .getRawMany();
   }
 }

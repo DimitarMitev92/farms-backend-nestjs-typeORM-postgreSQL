@@ -167,6 +167,8 @@ export class FieldService {
         'CAST(COUNT(field.id) AS int) AS count',
         'farm.id AS farmId',
         'crop.id AS cropId',
+        'farm.name AS farmName',
+        'crop.crop AS cropName',
       ])
       .innerJoin(Farm, 'farm', 'field.farm_id = farm.id')
       .innerJoin(
@@ -182,7 +184,11 @@ export class FieldService {
   async getMostCommonSoil(): Promise<FieldSoilDto[]> {
     return this.fieldRepository
       .createQueryBuilder('field')
-      .select(['CAST(COUNT(field.id) AS int) AS count', 'soil.id AS soilId'])
+      .select([
+        'CAST(COUNT(field.id) AS int) AS count',
+        'soil.id AS soilId',
+        'soil.soil AS soil',
+      ])
       .innerJoin(Soil, 'soil', 'field.soil_id = soil.id')
       .innerJoin(Farm, 'farm', 'farm.id = field.farm_id')
       .groupBy('soil.id')

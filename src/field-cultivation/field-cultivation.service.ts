@@ -10,6 +10,8 @@ import {
 } from '@nestjs/common';
 import { CreateFieldCultivationDto } from './dto/create-field-cultivation.dto';
 import { GrowingProcess } from 'src/growing-process/growing-process.entity';
+import { Farm } from 'src/farm/farm.entity';
+import { Field } from 'src/field/field.entity';
 
 @Injectable()
 export class FieldCultivationService {
@@ -44,6 +46,22 @@ export class FieldCultivationService {
 
   async findOne(id: string): Promise<FieldCultivation> {
     return this.checkFieldCultivationExists(id);
+  }
+
+  async findMachineryByFieldId(fieldId: string) {
+    const machineries = await this.machineryRepository
+      .createQueryBuilder('machinery')
+      .select([
+        'machinery.id , machinery.brand,machinery.model,machinery.identification_number',
+      ])
+      .innerJoin(Farm, 'farm', 'farm.id = machinery.farm_id')
+      .innerJoin(Field, 'field', 'field.farm_id = farm.id')
+      .where('field.id =:fieldId', {
+        fieldId: fieldId,
+      })
+      .getRawMany();
+
+    return machineries;
   }
 
   async create(

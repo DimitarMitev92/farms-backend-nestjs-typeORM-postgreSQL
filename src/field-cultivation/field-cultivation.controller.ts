@@ -31,6 +31,12 @@ export class FieldCultivationController {
     return this.fieldCultivationService.findOne(id);
   }
 
+  @Get('field/:id')
+  @Roles([UserRights.OWNER, UserRights.OPERATOR, UserRights.VIEWER])
+  findMachineryByFieldId(@Param('id') id: string) {
+    return this.fieldCultivationService.findMachineryByFieldId(id);
+  }
+
   @Post()
   @Roles([UserRights.OWNER, UserRights.OPERATOR, UserRights.VIEWER])
   create(

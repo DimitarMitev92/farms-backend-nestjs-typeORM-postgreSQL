@@ -115,6 +115,22 @@ export class MachineryService {
       throw new BadRequestException('Invalid farm id.');
     }
 
+    const fieldCultivationMachineryUse = await this.fieldCultivationRepository
+      .createQueryBuilder('field_cultivation')
+      .select(['field_cultivation.machinery_id'])
+      .innerJoin(
+        Machinery,
+        'machinery',
+        'machinery.id = field_cultivation.machinery_id',
+      )
+      .where('machinery.id = :machineryId', { machineryId: id })
+      .andWhere('field_cultivation.deletedAt IS NULL')
+      .getRawMany();
+
+    if (fieldCultivationMachineryUse.length > 0) {
+      throw new BadRequestException('Machinery is in use.');
+    }
+
     machinery = {
       ...machinery,
       ...updateMachineryDto,

@@ -4,6 +4,7 @@ import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { Public } from './public.decorator';
 
 import { LoggingUser } from './auth.service';
+import { ChangePasswordDto } from 'src/user/dto/change-password';
 
 @Controller('auth')
 export class AuthController {
@@ -16,6 +17,15 @@ export class AuthController {
     @Body() signInDto: CreateUserDto,
   ): Promise<{ user: LoggingUser; access_token: string }> {
     return this.authService.signIn(signInDto.email, signInDto.password);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Public()
+  @Post('change-password')
+  changePassword(
+    @Body() changePasswordDto: ChangePasswordDto,
+  ): Promise<{ user: LoggingUser; access_token: string }> {
+    return this.authService.changePassword(changePasswordDto);
   }
 
   @HttpCode(HttpStatus.CREATED)

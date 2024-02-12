@@ -158,12 +158,21 @@ export class FieldCultivationService {
     await this.fieldCultivationRepository.update(fieldCultivation.id, {
       deletedAt: new Date(),
     });
+
+    await this.growingProcessRepository.update(
+      fieldCultivation.growingProcessId,
+      { deletedAt: new Date() },
+    );
+
     return { message: 'Field cultivation deleted successfully' };
   }
 
   async permDelete(id: string): Promise<{ message: string }> {
     const fieldCultivation = await this.checkFieldCultivationExists(id);
     await this.fieldCultivationRepository.delete(fieldCultivation.id);
+    await this.growingProcessRepository.delete(
+      fieldCultivation.growingProcessId,
+    );
     return { message: 'Field cultivation permanently deleted successfully.' };
   }
 }

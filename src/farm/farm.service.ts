@@ -7,12 +7,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Farm } from './farm.entity';
 import { CreateFarmDto } from './dto/create-farm.dto';
+import { Machinery } from 'src/machinery/machinery.entity';
+import { Field } from 'src/field/field.entity';
 
 @Injectable()
 export class FarmService {
   constructor(
     @InjectRepository(Farm)
     private readonly farmRepository: Repository<Farm>,
+    @InjectRepository(Machinery)
+    private readonly machineryRepository: Repository<Machinery>,
+    @InjectRepository(Field)
+    private readonly fieldRepository: Repository<Field>,
   ) {}
 
   private async checkFarmExists(id: string): Promise<Farm> {
@@ -104,12 +110,40 @@ export class FarmService {
 
   async remove(id: string): Promise<{ message: string }> {
     const farm = await this.checkFarmExists(id);
+    const isFarmHasField = await this.fieldRepository.findOne({
+      where: { farmId: id, deletedAt: null },
+    });
+    if (isFarmHasField)
+      throw new BadRequestException(
+        'Farm has a field. Please first delete field.',
+      );
+    const isFarmHasMachinery = await this.machineryRepository.findOne({
+      where: { farmId: id, deletedAt: null },
+    });
+    if (isFarmHasMachinery)
+      throw new BadRequestException(
+        'Farm has a machinery. Please first delete machinery.',
+      );
     await this.farmRepository.update(farm.id, { deletedAt: new Date() });
     return { message: 'Farm deleted successfully' };
   }
 
   async permDelete(id: string): Promise<{ message: string }> {
     const farm = await this.checkFarmExists(id);
+    const isFarmHasField = await this.fieldRepository.findOne({
+      where: { farmId: id, deletedAt: null },
+    });
+    if (isFarmHasField)
+      throw new BadRequestException(
+        'Farm has a field. Please first delete field.',
+      );
+    const isFarmHasMachinery = await this.machineryRepository.findOne({
+      where: { farmId: id, deletedAt: null },
+    });
+    if (isFarmHasMachinery)
+      throw new BadRequestException(
+        'Farm has a machinery. Please first delete machinery.',
+      );
     await this.farmRepository.delete(farm.id);
     return { message: 'Farm permanently deleted successfully.' };
   }

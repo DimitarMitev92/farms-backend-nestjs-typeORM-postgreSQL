@@ -141,6 +141,14 @@ export class MachineryService {
 
   async remove(id: string): Promise<{ message: string }> {
     const machinery = await this.checkMachineryExists(id);
+    const isMachineryHasFieldCultivation =
+      await this.fieldCultivationRepository.findOne({
+        where: { machineryId: id, deletedAt: null },
+      });
+    if (isMachineryHasFieldCultivation)
+      throw new BadRequestException(
+        'Machinery is used. Please first delete field cultivation.',
+      );
     await this.machineryRepository.update(machinery.id, {
       deletedAt: new Date(),
     });
@@ -149,6 +157,14 @@ export class MachineryService {
 
   async permDelete(id: string): Promise<{ message: string }> {
     const machinery = await this.checkMachineryExists(id);
+    const isMachineryHasFieldCultivation =
+      await this.fieldCultivationRepository.findOne({
+        where: { machineryId: id, deletedAt: null },
+      });
+    if (isMachineryHasFieldCultivation)
+      throw new BadRequestException(
+        'Machinery is used. Please first delete field cultivation.',
+      );
     await this.machineryRepository.delete(machinery.id);
     return { message: 'Machinery permanently deleted successfully.' };
   }

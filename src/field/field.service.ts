@@ -13,6 +13,7 @@ import { FieldCountDto } from './dto/field-count.dto';
 import { Crop } from 'src/crop/crop.entity';
 import { GrowingProcess } from 'src/growing-process/growing-process.entity';
 import { FieldSoilDto } from './dto/field-soil.dto';
+import { FieldCultivation } from 'src/field-cultivation/field-cultivation.entity';
 
 @Injectable()
 export class FieldService {
@@ -23,6 +24,8 @@ export class FieldService {
     private readonly soilRepository: Repository<Soil>,
     @InjectRepository(Farm)
     private readonly farmRepository: Repository<Farm>,
+    @InjectRepository(FieldCultivation)
+    private readonly fieldCultivationRepository: Repository<FieldCultivation>,
   ) {}
 
   private async checkFieldExists(id: string): Promise<Field> {
@@ -149,8 +152,29 @@ export class FieldService {
 
   async remove(id: string): Promise<{ message: string }> {
     const field = await this.checkFieldExists(id);
-    await this.fieldRepository.update(field.id, { deletedAt: new Date() });
+    console.log(field);
 
+    const isFieldHasCultivation = await this.fieldRepository
+      .createQueryBuilder('field')
+      .select(['field.id'])
+      .innerJoin('growing_process', 'process', 'field.id = process.field_id')
+      .innerJoin(
+        'field_cultivation',
+        'cultivation',
+        'cultivation.growing_process_id = process.id',
+      )
+      .where('field.id = :fieldId', { fieldId: id })
+      .getMany();
+
+    console.log(isFieldHasCultivation);
+
+    if (isFieldHasCultivation.length > 0) {
+      throw new BadRequestException(
+        'Field has a cultivation. Please first delete fields cultivation.',
+      );
+    }
+
+    await this.fieldRepository.update(field.id, { deletedAt: new Date() });
     return { message: 'Field deleted successfully' };
   }
 

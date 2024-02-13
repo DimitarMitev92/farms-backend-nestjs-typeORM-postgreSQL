@@ -152,7 +152,6 @@ export class FieldService {
 
   async remove(id: string): Promise<{ message: string }> {
     const field = await this.checkFieldExists(id);
-    console.log(field);
 
     const isFieldHasCultivation = await this.fieldRepository
       .createQueryBuilder('field')
@@ -166,8 +165,6 @@ export class FieldService {
       .where('field.id = :fieldId', { fieldId: id })
       .getMany();
 
-    console.log(isFieldHasCultivation);
-
     if (isFieldHasCultivation.length > 0) {
       throw new BadRequestException(
         'Field has a cultivation. Please first delete fields cultivation.',
@@ -180,6 +177,25 @@ export class FieldService {
 
   async permDelete(id: string): Promise<{ message: string }> {
     const field = await this.checkFieldExists(id);
+
+    const isFieldHasCultivation = await this.fieldRepository
+      .createQueryBuilder('field')
+      .select(['field.id'])
+      .innerJoin('growing_process', 'process', 'field.id = process.field_id')
+      .innerJoin(
+        'field_cultivation',
+        'cultivation',
+        'cultivation.growing_process_id = process.id',
+      )
+      .where('field.id = :fieldId', { fieldId: id })
+      .getMany();
+
+    if (isFieldHasCultivation.length > 0) {
+      throw new BadRequestException(
+        'Field has a cultivation. Please first delete fields cultivation.',
+      );
+    }
+
     await this.fieldRepository.delete(field.id);
     return { message: 'Field permanently deleted successfully.' };
   }

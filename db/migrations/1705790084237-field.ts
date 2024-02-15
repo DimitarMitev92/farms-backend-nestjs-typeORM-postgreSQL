@@ -1,4 +1,9 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateFieldTable1705790084237 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -33,6 +38,24 @@ export class CreateFieldTable1705790084237 implements MigrationInterface {
         ],
       }),
       true,
+    );
+
+    await queryRunner.createForeignKey(
+      'field',
+      new TableForeignKey({
+        columnNames: ['soil_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'soil',
+      }),
+    );
+
+    await queryRunner.createForeignKey(
+      'field',
+      new TableForeignKey({
+        columnNames: ['farm_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'farm',
+      }),
     );
   }
 

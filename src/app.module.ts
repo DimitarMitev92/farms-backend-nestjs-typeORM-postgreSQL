@@ -16,7 +16,7 @@ import { CultivationModule } from './cultivation/cultivation.module';
 import { GrowingProcessModule } from './growing-process/growing-process.module';
 import { ReportingModule } from './reporting/reporting.module';
 import { AuthModule } from './auth/auth.module';
-import { APP_GUARD, APP_FILTER } from '@nestjs/core'; // Add APP_FILTER
+import { APP_GUARD, APP_FILTER } from '@nestjs/core';
 import { RolesGuard } from './auth/roles.guard';
 import { GlobalExceptionFilter } from './global-exception.filter';
 

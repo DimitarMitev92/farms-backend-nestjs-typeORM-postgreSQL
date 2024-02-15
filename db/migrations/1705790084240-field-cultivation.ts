@@ -1,4 +1,9 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateFieldCultivationTable1705790084240
   implements MigrationInterface
@@ -35,6 +40,33 @@ export class CreateFieldCultivationTable1705790084240
         ],
       }),
       true,
+    );
+
+    await queryRunner.createForeignKey(
+      'field_cultivation',
+      new TableForeignKey({
+        columnNames: ['cultivation_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'cultivation',
+      }),
+    );
+
+    await queryRunner.createForeignKey(
+      'field_cultivation',
+      new TableForeignKey({
+        columnNames: ['machinery_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'machinery',
+      }),
+    );
+
+    await queryRunner.createForeignKey(
+      'field_cultivation',
+      new TableForeignKey({
+        columnNames: ['growing_process_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'growing_process',
+      }),
     );
   }
 

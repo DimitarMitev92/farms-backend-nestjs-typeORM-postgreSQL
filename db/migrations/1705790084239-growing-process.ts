@@ -1,4 +1,9 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateGrowingProcessTable1705790084239
   implements MigrationInterface
@@ -33,6 +38,24 @@ export class CreateGrowingProcessTable1705790084239
         ],
       }),
       true,
+    );
+
+    await queryRunner.createForeignKey(
+      'growing_process',
+      new TableForeignKey({
+        columnNames: ['crop_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'crop',
+      }),
+    );
+
+    await queryRunner.createForeignKey(
+      'growing_process',
+      new TableForeignKey({
+        columnNames: ['field_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'field',
+      }),
     );
   }
 
